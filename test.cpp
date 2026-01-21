@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -7,53 +6,107 @@
 using namespace std;
 using namespace chrono;
 
-// Bubble Sort usando punteros
-void bubbleSort(int* arr, int n) {
-    for (int i = 0; i < n - 1; i++) {
-        bool swapped = false;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (*(arr + j) > *(arr + j + 1)) {
-                int temp = *(arr + j);
-                *(arr + j) = *(arr + j + 1);
-                *(arr + j + 1) = temp;
-                swapped = true;
-            }
+/* ---------- QUICK SORT ---------- */
+int partition(int* arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
         }
-        if (!swapped) break; // Optimización
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(int* arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
     }
 }
 
+/* ---------- MAIN ---------- */
 int main() {
-    int n;
-    cout << "Ingrese la cantidad de elementos: ";
-    cin >> n;
+    const int N = 1'000'000;
 
-    // Reservar memoria dinámica
-    int* arr = new int[n];
+    int* original = new int[N];
+    int* bubbleArr = new int[N];
+    int* quickArr  = new int[N];
 
-    // Llenar con valores aleatorios
     srand(time(NULL));
-    for (int i = 0; i < n; i++) {
-        *(arr + i) = rand();
+
+    for (int i = 0; i < N; i++) {
+        original[i] = rand();
+        bubbleArr[i] = original[i];
+        quickArr[i]  = original[i];
     }
 
-    cout << "Ordenando..." << endl;
+    /* ================= BUBBLE SORT ================= */
+    cout << "==== PRUEBA 1: BUBBLE SORT (1 MINUTO) ====\n";
 
-    auto inicio = high_resolution_clock::now();
-    bubbleSort(arr, n);
-    auto fin = high_resolution_clock::now();
+    long long comparaciones = 0;
+    int pasadas = 0;
 
-    duration<double> tiempo = fin - inicio;
+    auto inicioBubble = steady_clock::now();
+    bool terminado = true;
 
-    cout << "Tiempo de ejecucion: " << tiempo.count() << " segundos" << endl;
+    for (int i = 0; i < N - 1; i++) {
+        bool swapped = false;
 
-    if (tiempo.count() >= 60.0)
-        cout << "[X] Supero 1 minuto" << endl;
-    else
-        cout << "[OK] Menos de 1 minuto" << endl;
+        for (int j = 0; j < N - i - 1; j++) {
+            comparaciones++;
 
-    // Liberar memoria
-    delete[] arr;
+            if (bubbleArr[j] > bubbleArr[j + 1]) {
+                swap(bubbleArr[j], bubbleArr[j + 1]);
+                swapped = true;
+            }
 
+            auto ahora = steady_clock::now();
+            if (duration<double>(ahora - inicioBubble).count() >= 60.0) {
+                terminado = false;
+                break;
+            }
+        }
+
+        if (!terminado) break;
+
+        pasadas++;
+        if (!swapped) break;
+    }
+
+    auto finBubble = steady_clock::now();
+    double tiempoBubble = duration<double>(finBubble - inicioBubble).count();
+
+    cout << "Tiempo Bubble Sort: " << tiempoBubble << " segundos\n";
+    cout << "Pasadas completadas: " << pasadas << endl;
+    cout << "Comparaciones: " << comparaciones << endl;
+    cout << "Estado: " << (terminado ? "COMPLETADO" : "DETENIDO POR LIMITE") << "\n\n";
+
+    /* ================= QUICK SORT ================= */
+    cout << "==== PRUEBA 2: QUICK SORT ====\n";
+
+    auto inicioQuick = steady_clock::now();
+    quickSort(quickArr, 0, N - 1);
+    auto finQuick = steady_clock::now();
+
+    double tiempoQuick = duration<double>(finQuick - inicioQuick).count();
+
+    cout << "Tiempo QuickSort: " << tiempoQuick << " segundos\n";
+    cout << "Estado: ORDENAMIENTO COMPLETADO\n";
+
+    /* ================= CONCLUSION ================= */
+    cout << "\n==== CONCLUSION ====\n";
+    cout << "Bubble Sort es inviable para 1 millon de datos\n";
+    cout << "QuickSort es eficiente y escala correctamente\n";
+
+    delete[] original;
+    delete[] bubbleArr;
+    delete[] quickArr;
+
+    system("pause");
     return 0;
 }
