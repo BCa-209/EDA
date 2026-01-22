@@ -50,6 +50,7 @@ int main() {
 
     long long comparaciones = 0;
     int pasadas = 0;
+    int elementosOrdenados = 0;
 
     auto inicioBubble = steady_clock::now();
     bool terminado = true;
@@ -75,8 +76,11 @@ int main() {
         if (!terminado) break;
 
         pasadas++;
+        elementosOrdenados = pasadas;
+
         if (!swapped) break;
     }
+
 
     auto finBubble = steady_clock::now();
     double tiempoBubble = duration<double>(finBubble - inicioBubble).count();
@@ -84,6 +88,7 @@ int main() {
     cout << "Tiempo Bubble Sort: " << tiempoBubble << " segundos\n";
     cout << "Pasadas completadas: " << pasadas << endl;
     cout << "Comparaciones: " << comparaciones << endl;
+    cout << "Elementos ordenados en 1 minuto: " << elementosOrdenados << " de " << N << endl;
     cout << "Estado: " << (terminado ? "COMPLETADO" : "DETENIDO POR LIMITE") << "\n\n";
 
     /* ================= QUICK SORT ================= */
