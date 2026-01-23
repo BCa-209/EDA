@@ -1,0 +1,6 @@
+# Carpetas de compilación
+build/
+output/
+
+# Configuración del editor
+.vscode/
