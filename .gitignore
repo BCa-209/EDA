@@ -1,7 +1,7 @@
 # Carpetas de compilación
 build/
-/output/
+output/
 
 # Configuración del editor
-/.vscode/
+.vscode/
  
