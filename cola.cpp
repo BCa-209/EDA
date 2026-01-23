@@ -69,6 +69,7 @@ int main() {
     cout << "Elementos en la cola: ";
     cola.imprimir();
 
+    cout << "-Desencolar" << endl;
     cola.desencolar();
     cout << "Elementos despues de desencolar: ";
     cola.imprimir();
