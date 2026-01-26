@@ -190,7 +190,7 @@ public:
         }
         cout << "NULL" << endl;
     }
-
+    
     // Destructor: libera toda la memoria usada por la lista
     ~Lista() {
         Nodo* actual = cabezaptr;
@@ -203,47 +203,62 @@ public:
     }
 };
 
+class Pila {
+private:
+    Lista elementos = Lista();
+public:
+    void enpilar(int valor) {
+        elementos.addIni(valor);
+    }
+
+    void despilar() {
+        elementos.dropIni();    
+    }
+    void mostrarPila() {
+        elementos.print();
+    }
+};
+
+class Cola {
+private:
+    Lista elementos = Lista();
+public:
+    void encolar(int valor) {
+        elementos.add(valor);
+    }
+    void desencolar() {
+        elementos.dropIni();    
+    }
+    void mostrarCola() {
+        elementos.print();
+    }
+};
+
 int main() {
-    Lista liss;
+    Cola liss;
 
+    cout << "--------AHORA CON COLA---------" << endl;
     // Llenamos la lista
-    liss.add(50);
-    liss.add(40);
-    liss.add(30);
-    liss.add(20);
-    liss.add(10);
+    liss.encolar(1);
+    liss.encolar(2);
+    liss.encolar(3);
+    liss.mostrarCola();
+    liss.desencolar();
+    liss.desencolar();
+    liss.mostrarCola();
 
-    cout << "--- Lista Inicial ---" << endl;
-    liss.print();
+    cout << "--------AHORA CON PILA---------" << endl;
 
-    cout << "\nInsertando 99 en la posicion 2..." << endl;
-    liss.addPos(99, 2);
-    liss.print();
+    Pila pila;
+    pila.enpilar(10);
+    pila.enpilar(20);
+    pila.enpilar(30);
+    pila.mostrarPila();
+    pila.despilar();
+    pila.despilar();
+    pila.mostrarPila();
 
-    cout << "\nInsertando 5 en la posicion 4..." << endl;
-    liss.addPos(5, 4);
-    liss.print();
-
-    cout << "\nInsertando 25 al inicio..." << endl;
-    liss.addIni(25);
-    liss.print();
-
-    cout << "\nUsando dropIni() (elimina el primer nodo):" << endl;
-    liss.dropIni();
-    liss.print();
-
-    cout << "\nUsando drop() (elimina el ultimo nodo):" << endl;
-    liss.drop();
-    liss.print();
-
-    cout << "\nUsando dropPos(2) (elimina el nodo en indice 2):" << endl;
-    liss.dropPos(2);
-    liss.print();
-    liss.printRev();
     return 0;
 }
 
-// TODO desturctor, agregar por posicion, eliminar por posicion.
-
-// TODDO pila y cola con listas doblemente eslanzadas
-// TODDO lista doblemenrerni elnlashgascdt
+// TODO pila y cola con listas doblemente enlazadas
