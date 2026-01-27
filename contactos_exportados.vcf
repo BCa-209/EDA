@@ -1,0 +1,52 @@
+BEGIN:VCARD
+VERSION:2.1
+N:Calderon;Brayan;Calderon2;;;
+FN:Brayan Calderon
+TEL;CELL:972253527
+TEL;CELL:960096116
+EMAIL:brayan@mail.com
+ADR:jr. mi jaus 123
+END:VCARD
+BEGIN:VCARD
+VERSION:2.1
+N:Perez;Andrea;Lopez;;;
+FN:Andrea Perez
+TEL;CELL:987654321
+TEL;CELL:945112233
+EMAIL:andrea.perez@mail.com
+ADR:Av. Los Olivos 123
+END:VCARD
+BEGIN:VCARD
+VERSION:2.1
+N:Gomez;Luis;Lujan;;;
+FN:Luis Gomez
+TEL;CELL:999888777
+EMAIL:luis.gomez@mail.com
+ADR:Jr. Primavera 456
+END:VCARD
+BEGIN:VCARD
+VERSION:2.1
+N:Ramirez;Carla;Neyra;;;
+FN:Carla Ramirez
+TEL;CELL:912345678
+TEL;CELL:914567890
+EMAIL:carla.ramirez@mail.com
+ADR:Calle Las Flores 789
+END:VCARD
+BEGIN:VCARD
+VERSION:2.1
+N:Torres;Miguel;Ayala;;;
+FN:Miguel Torres
+TEL;CELL:923456789
+EMAIL:miguel.torres@mail.com
+ADR:Mz B Lt 10 - San Juan
+END:VCARD
+BEGIN:VCARD
+VERSION:2.1
+N:Lujan;Daniel;torres;;;
+FN:Daniel Lujan
+TEL;CELL:123456
+TEL;CELL:987456123
+EMAIL:
+ADR:jr su casita
+END:VCARD

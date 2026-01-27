@@ -1,0 +1,76 @@
+BEGIN:VCARD
+VERSION:2.1
+ID:1
+N:Calderon;Brayan;Calderon2;;;
+FN:Brayan Calderon Calderon2
+TEL;CELL:972253527
+TEL;CELL:960096116
+EMAIL:brayan@mail.com
+ADR:jr. mi jaus 123
+PADRE_ID:
+MADRE_ID:
+END:VCARD
+
+BEGIN:VCARD
+VERSION:2.1
+ID:2
+N:Perez;Andrea;Lopez;;;
+FN:Andrea Perez Lopez
+TEL;CELL:987654321
+TEL;CELL:945112233
+EMAIL:andrea.perez@mail.com
+ADR:Av. Los Olivos 123
+PADRE_ID:
+MADRE_ID:
+END:VCARD
+
+BEGIN:VCARD
+VERSION:2.1
+ID:3
+N:Gomez;Luis;Lujan;;;
+FN:Luis Gomez Lujan
+TEL;CELL:999888777
+EMAIL:luis.gomez@mail.com
+ADR:Jr. Primavera 456
+PADRE_ID:
+MADRE_ID:
+END:VCARD
+
+BEGIN:VCARD
+VERSION:2.1
+ID:4
+N:Ramirez;Carla;Neyra;;;
+FN:Carla Ramirez Neyra
+TEL;CELL:912345678
+TEL;CELL:914567890
+EMAIL:carla.ramirez@mail.com
+ADR:Calle Las Flores 789
+PADRE_ID:2
+MADRE_ID:
+END:VCARD
+
+BEGIN:VCARD
+VERSION:2.1
+ID:5
+N:Torres;Miguel;Ayala;;;
+FN:Miguel Torres Ayala
+TEL;CELL:923456789
+EMAIL:miguel.torres@mail.com
+ADR:Mz B Lt 10 - San Juan
+PADRE_ID:
+MADRE_ID:
+END:VCARD
+
+BEGIN:VCARD
+VERSION:2.1
+ID:6
+N:Lujan;Daniel;torres;;;
+FN:Daniel Lujan torres
+TEL;CELL:123456
+TEL;CELL:987456123
+EMAIL:
+ADR:jr su casita
+PADRE_ID:3
+MADRE_ID:6
+END:VCARD
+

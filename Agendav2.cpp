@@ -265,13 +265,8 @@ class Agenda {
     string nombreArchivo;
     Lista* listaContactos;
     
-    
-    public:
-    Agenda() {
-        nombreArchivo = "agenda.txt";
-        listaContactos = new Lista();
-    }
-    
+    private:
+    // Métodos auxiliares para guardar/leer strings en archivos binarios
     void guardarString(ofstream& archivo, const string& str) {
         size_t size = str.size();
         archivo.write(reinterpret_cast<char*>(&size), sizeof(size_t));
@@ -287,6 +282,13 @@ class Agenda {
         
         return str;
     }
+    
+    public:
+    Agenda() {
+        nombreArchivo = "agenda.txt";
+        listaContactos = new Lista();
+    }
+    
     // Guardar la lista completa en archivo binario
     void guardarEnArchivo() {
         ofstream archivo(nombreArchivo, ios::binary | ios::trunc);
