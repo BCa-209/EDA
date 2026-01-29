@@ -140,7 +140,7 @@ void mostrarMenuPrincipal() {
     
     cout << "|  ";
     cout << mensaje_prompt();
-    cout << "Seleccione una opción: ";
+    cout << "Seleccione una opcion: ";
     cout << marco_principal();
     cout << "             |\n";
     cout << "+--------------------------------------+\n";
@@ -596,8 +596,8 @@ public:
                 getline(cin, input);
                 if (!input.empty()) actual->correo = input;
 
-                cout << datos_contacto() << "Dirección actual: " << actual->direccion << RESET << endl;
-                cout << mensaje_prompt() << "Nueva dirección: " << RESET;
+                cout << datos_contacto() << "Direccion actual: " << actual->direccion << RESET << endl;
+                cout << mensaje_prompt() << "Nueva direccion: " << RESET;
                 getline(cin, input);
                 if (!input.empty()) actual->direccion = input;
 
@@ -642,7 +642,7 @@ public:
             }
             actual = actual->siguiente;
         }
-        mostrarMensaje("No se encontró contacto con ID " + to_string(id), mensaje_error());
+        mostrarMensaje("No se encontro contacto con ID " + to_string(id), mensaje_error());
     }
 
     void eliminarContactoPorID(int id) {
@@ -657,7 +657,7 @@ public:
             actual = actual->siguiente;
             pos++;
         }
-        mostrarMensaje("No se encontró contacto con ID " + to_string(id), mensaje_error());
+        mostrarMensaje("No se encontro contacto con ID " + to_string(id), mensaje_error());
     }
     
     void buscarContacto(string nombre) {
@@ -715,7 +715,7 @@ public:
         for (size_t i = to_string(total).length() + 20; i < 36; i++) cout << " ";
         cout << marco_principal() << " |\n";
         
-        cout << "|  " << datos_contacto() << "Próximo ID disponible: " << Nodo::contador_id;
+        cout << "|  " << datos_contacto() << "Proximo ID disponible: " << Nodo::contador_id;
         for (size_t i = to_string(Nodo::contador_id).length() + 24; i < 36; i++) cout << " ";
         cout << marco_principal() << " |\n";
         cout << "|                                      |\n";
@@ -884,7 +884,7 @@ int main() {
                 cout << mensaje_prompt() << "Correo: " << RESET;
                 getline(cin, mail);
 
-                cout << mensaje_prompt() << "Dirección: " << RESET;
+                cout << mensaje_prompt() << "Direccion: " << RESET;
                 getline(cin, dir);
 
                 miAgenda.mostrarListaRapida();
@@ -998,7 +998,7 @@ int main() {
                 break;
 
             default:
-                mostrarMensaje("Opción inválida. Intente nuevamente.", mensaje_error());
+                mostrarMensaje("Opcion inválida. Intente nuevamente.", mensaje_error());
                 break;
         }
 
