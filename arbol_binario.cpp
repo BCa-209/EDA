@@ -255,7 +255,7 @@ public:
             
             // Conectar con diagonal
             for (int j = posIzq + 1; j < pos; j++) {
-                niveles[filaRama][j] = "___";
+                niveles[filaRama][j] = "   ";
                 tieneHijo[filaRama][j] = true;
             }
             
@@ -274,7 +274,7 @@ public:
             
             // Conectar con diagonal
             for (int j = pos + 1; j < posDer; j++) {
-                niveles[filaRama][j] = "___";
+                niveles[filaRama][j] = "   ";
                 tieneHijo[filaRama][j] = true;
             }
             
@@ -353,3 +353,5 @@ int main() {
 
 // TODO: insertar (char), eliminar, buscar, imprimir
 // TODO: pre-order, in-order, post-order
+
+
