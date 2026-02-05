@@ -1,0 +1,55 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+  font-family: system-ui, sans-serif;
+}
+
+canvas:not(#inputCanvas) {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ui {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 10;
+  color: white;
+}
+
+.ui input,
+.ui button,
+.ui label {
+  padding: 6px 8px;
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  font-size: 13px;
+}
+
+.ui label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#inputCanvas {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  border: 1px solid #333;
+  background: black;
+  cursor: crosshair;
+}
