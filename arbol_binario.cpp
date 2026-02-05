@@ -6,6 +6,20 @@
 
 using namespace std;
 
+void limpiarPantalla() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void pausar() {
+    cout << "\nPresione Enter para continuar...";
+    cin.ignore();
+    cin.get();
+}
+
 class Nodo {
 public:
     char dato;  
@@ -22,11 +36,11 @@ public:
 
 class Arbol {
 public:
-    Nodo* raiz;       // Puntero a la raíz del árbol
+    Nodo* raiz;       // Puntero a la raiz del arbol
 
-    // Constructor del árbol
+    // Constructor del arbol
     Arbol() {
-        raiz = nullptr; // El árbol inicia vacío
+        raiz = nullptr; // El arbol inicia vacio
     }
 
 
@@ -151,34 +165,23 @@ public:
         if (nodo == nullptr)
             return;
 
-        // Primero el subárbol derecho
+        // Primero el subarbol derecho
         imprimir(nodo->derecho, nivel + 1);
 
-        // Espacios según el nivel
+        // Espacios segun el nivel
         for (int i = 0; i < nivel; i++)
             cout << "    ";
 
         // Imprimir el dato
         cout << nodo->dato << endl;
 
-        // Luego el subárbol izquierdo
+        // Luego el subarbol izquierdo
         imprimir(nodo->izquierdo, nivel + 1);
-    }
-
-    void imprimirArbol(Nodo* nodo, string prefijo = "", bool esIzq = true) {
-        if (nodo == nullptr) return;
-
-        cout << prefijo;
-        cout << (esIzq ? "|-- " : "\\-- ");
-        cout << nodo->dato << endl;
-
-        imprimirArbol(nodo->izquierdo, prefijo + (esIzq ? "|   " : "    "), true);
-        imprimirArbol(nodo->derecho, prefijo + (esIzq ? "|   " : "    "), false);
     }
 
     void visualizarHorizontal() {
         if (raiz == nullptr) {
-            cout << "El árbol está vacío." << endl;
+            cout << "El arbol esta vacio." << endl;
             return;
         }
         
@@ -194,20 +197,20 @@ public:
             tieneHijo[i].resize(ancho, false);
         }
         
-        // Llenar la matriz con los valores del árbol
+        // Llenar la matriz con los valores del arbol
         llenarMatriz(raiz, niveles, tieneHijo, 0, ancho / 2, altura, 0);
         
-        // Imprimir el árbol
+        // Imprimir el arbol
         cout << "\nARBOL BINARIO (Formato Horizontal):\n" << endl;
         for (int i = 0; i < altura * 2; i++) {
-            // Nivel de nodos (líneas pares)
+            // Nivel de nodos (lineas pares)
             if (i % 2 == 0) {
                 for (int j = 0; j < ancho; j++) {
                     cout << niveles[i][j];
                 }
                 cout << endl;
             } 
-            // Nivel de ramas (líneas impares)
+            // Nivel de ramas (lineas impares)
             else {
                 for (int j = 0; j < ancho; j++) {
                     if (tieneHijo[i][j]) {
@@ -223,13 +226,13 @@ public:
     }
 
     private:
-    // Función para calcular la altura del árbol
+    // Funcion para calcular la altura del arbol
     int calcularAltura(Nodo* nodo) {
         if (nodo == nullptr) return 0;
         return 1 + max(calcularAltura(nodo->izquierdo), calcularAltura(nodo->derecho));
     }
     
-    // Función recursiva para llenar la matriz de visualización
+    // Funcion recursiva para llenar la matriz de visualizacion
     void llenarMatriz(Nodo* nodo, vector<vector<string>>& niveles, 
                     vector<vector<bool>>& tieneHijo, int nivel, int pos, 
                     int alturaTotal, int offset) {
@@ -287,71 +290,215 @@ public:
 
 int main() {
     Arbol arbolito;
-    //arbolito.insertar(5);   // 0   
-    //arbolito.insertar(2);   // 1
-    //arbolito.insertar(1);   // 1
-    //arbolito.insertar(3);   // 1
-    //arbolito.insertar(9);   // 1
-    //arbolito.insertar(7);   // 2
-    //arbolito.insertar(6);   // 2
-    //arbolito.insertar(8);   // 2
-    //arbolito.insertar(10);  // 2
-    //arbolito.insertar(11);  // 3
+    int opcion;
+    string cadena;
+    char caracter;
+    string cadenaActual = "";  // Para mostrar la cadena actual en el árbol
 
-    // usa el valor ASCII de las letras para hcaer comparacioes en los metods del aarbol
-    arbolito.insertar('h');   
-    arbolito.insertar('o');   
-    arbolito.insertar('l');   
-    arbolito.insertar('a');      
-    arbolito.insertar(' ');   
-    arbolito.insertar('m');   
-    arbolito.insertar('u');   
-    arbolito.insertar('n');   
-    arbolito.insertar('d');   
-    arbolito.insertar('o');   
+    do {
+        limpiarPantalla();
+        cout << "===========================================\n";
+        cout << "        ARBOL BINARIO DE CADENAS\n";
+        cout << "===========================================\n";
+        
+        // Mostrar la cadena actual almacenada
+        if (!cadenaActual.empty()) {
+            cout << "Cadena en el arbol: \"" << cadenaActual << "\"\n";
+        } else {
+            cout << "Arbol vacio\n";
+        }
+        cout << "===========================================\n";
+        
+        cout << "\n===== MENU PRINCIPAL =====\n";
+        cout << "1. Insertar nueva cadena (reemplaza actual)\n";
+        cout << "2. Agregar caracter individual\n";
+        cout << "3. Agregar a la cadena actual\n";
+        cout << "4. Eliminar caracter\n";
+        cout << "5. Buscar caracter\n";
+        cout << "6. Mostrar recorridos\n";
+        cout << "7. Visualizar arbol (horizontal)\n";
+        cout << "8. Imprimir arbol (vertical)\n";
+        cout << "9. Vaciar arbol\n";
+        cout << "0. Salir\n";
+        cout << "\nSeleccione una opcion: ";
+        cin >> opcion;
+        cin.ignore(); // Limpiar buffer
 
-    arbolito.imprimir(arbolito.raiz);
-    cout << endl;
-    arbolito.imprimirArbol(arbolito.raiz);
-    cout << endl;
-    arbolito.visualizarHorizontal();
-    cout << endl;
+        switch (opcion) {
+            case 1: {
+                limpiarPantalla();
+                cout << "===== INSERTAR NUEVA CADENA =====\n";
+                cout << "Introduce una cadena de texto: ";
+                getline(cin, cadena);
+                
+                // Vaciar el árbol y la cadena actual
+                arbolito = Arbol();  // Crear nuevo árbol
+                cadenaActual = "";
+                
+                // Insertar nueva cadena
+                for (char c : cadena) {
+                    arbolito.insertar(c);
+                    cadenaActual += c;
+                }
+                
+                cout << "\nCadena \"" << cadena << "\" insertada exitosamente.\n";
+                pausar();
+                break;
+            }
+                
+            case 2: {
+                limpiarPantalla();
+                cout << "===== INSERTAR CARACTER INDIVIDUAL =====\n";
+                cout << "Introduce un caracter: ";
+                cin >> caracter;
+                arbolito.insertar(caracter);
+                cadenaActual += caracter;
+                
+                cout << "\nCaracter '" << caracter << "' insertado.\n";
+                cout << "Cadena actual: \"" << cadenaActual << "\"\n";
+                pausar();
+                break;
+            }
+                
+            case 3: {
+                limpiarPantalla();
+                cout << "===== AGREGAR A CADENA ACTUAL =====\n";
+                cout << "Cadena actual: \"" << cadenaActual << "\"\n";
+                cout << "Introduce texto para agregar: ";
+                getline(cin, cadena);
+                
+                for (char c : cadena) {
+                    arbolito.insertar(c);
+                    cadenaActual += c;
+                }
+                
+                cout << "\nTexto agregado exitosamente.\n";
+                cout << "Nueva cadena: \"" << cadenaActual << "\"\n";
+                pausar();
+                break;
+            }
+                
+            case 4: {
+                limpiarPantalla();
+                cout << "===== ELIMINAR CARACTER =====\n";
+                if (cadenaActual.empty()) {
+                    cout << "El arbol esta vacio.\n";
+                } else {
+                    cout << "Cadena actual: \"" << cadenaActual << "\"\n";
+                    cout << "Introduce el caracter a eliminar: ";
+                    cin >> caracter;
+                    
+                    // Verificar si el caracter existe
+                    if (cadenaActual.find(caracter) != string::npos) {
+                        arbolito.eliminar(caracter);
+                        
+                        // Actualizar la cadena (eliminar primera ocurrencia)
+                        size_t pos = cadenaActual.find(caracter);
+                        if (pos != string::npos) {
+                            cadenaActual.erase(pos, 1);
+                        }
+                        
+                        cout << "\nCaracter '" << caracter << "' eliminado.\n";
+                    } else {
+                        cout << "\n✗ El caracter '" << caracter << "' no existe en la cadena.\n";
+                    }
+                }
+                pausar();
+                break;
+            }
+                
+            case 5: {
+                limpiarPantalla();
+                cout << "===== BUSCAR CARACTER =====\n";
+                if (cadenaActual.empty()) {
+                    cout << "El arbol esta vacio.\n";
+                } else {
+                    cout << "Cadena actual: \"" << cadenaActual << "\"\n";
+                    cout << "Introduce el caracter a buscar: ";
+                    cin >> caracter;
+                    
+                    if (arbolito.buscar(caracter)) {
+                        cout << "\nEl caracter '" << caracter << "' SI esta en el arbol.\n";
+                    } else {
+                        cout << "\n✗ El caracter '" << caracter << "' NO esta en el arbol.\n";
+                    }
+                }
+                pausar();
+                break;
+            }
+                
+            case 6: {
+                limpiarPantalla();
+                cout << "===== RECORRIDOS DEL ARBOL =====\n";
+                if (cadenaActual.empty()) {
+                    cout << "El arbol esta vacio.\n";
+                } else {
+                    cout << "Cadena: \"" << cadenaActual << "\"\n\n";
+                    cout << "Pre-order:  ";
+                    arbolito.preOrder();
+                    cout << "\n\nIn-order:   ";
+                    arbolito.inOrder();
+                    cout << "\n\nPost-order: ";
+                    arbolito.postOrder();
+                    cout << endl;
+                }
+                pausar();
+                break;
+            }
+                
+            case 7: {
+                limpiarPantalla();
+                cout << "===== VISUALIZACION HORIZONTAL =====\n";
+                if (cadenaActual.empty()) {
+                    cout << "El arbol esta vacio.\n";
+                } else {
+                    cout << "Cadena: \"" << cadenaActual << "\"\n";
+                    arbolito.visualizarHorizontal();
+                }
+                pausar();
+                break;
+            }
+                
+            case 8: {
+                limpiarPantalla();
+                cout << "===== VISUALIZACION VERTICAL =====\n";
+                if (cadenaActual.empty()) {
+                    cout << "El arbol esta vacio.\n";
+                } else {
+                    cout << "Cadena: \"" << cadenaActual << "\"\n";
+                    cout << "\nArbol Binario (formato vertical):\n";
+                    arbolito.imprimir(arbolito.raiz);
+                }
+                pausar();
+                break;
+            }
+                
+            case 9: {
+                limpiarPantalla();
+                cout << "===== VACIAR ARBOL =====\n";
+                arbolito = Arbol();  // Crear nuevo árbol vacío
+                cadenaActual = "";
+                cout << "\nArbol vaciado exitosamente.\n";
+                pausar();
+                break;
+            }
+                
+            case 0: {
+                limpiarPantalla();
+                cout << "===========================================\n";
+                cout << "        SALIENDO DEL PROGRAMA\n";
+                cout << "===========================================\n";
+                cout << "\nGracias por usar el Arbol Binario de Cadenas\n";
+                break;
+            }
+                
+            default: {
+                cout << "\n✗ Opcion no valida.\n";
+                pausar();
+                break;
+            }
+        }
+    } while (opcion != 0);
 
-    cout << "Pre-order: ";
-    arbolito.preOrder(); 
-    cout << endl;
-
-    cout << "In-order: ";
-    arbolito.inOrder();
-    cout << endl;
-
-    cout << "Post-order: ";
-    arbolito.postOrder();
-    cout << endl;
-
-    arbolito.eliminar('m');
-    cout << "\nDespues de eliminar 'm':\n";
-    arbolito.imprimir(arbolito.raiz);
-    cout << endl;
-    arbolito.imprimirArbol(arbolito.raiz);
-    cout << endl;
-    arbolito.visualizarHorizontal();
-    cout << endl;
-
-    arbolito.preOrder();
-    cout << endl;
-    arbolito.inOrder();
-    cout << endl;
-    arbolito.postOrder();
-    cout << endl;
-    arbolito.buscar('a') ? cout << "\nEl nodo 'a' fue encontrado en el arbol.\n" 
-                        : cout << "\nEl nodo 'a' no fue encontrado en el arbol.\n";
-
-    
     return 0;
 }
-
-// TODO: insertar (char), eliminar, buscar, imprimir
-// TODO: pre-order, in-order, post-order
-
-
