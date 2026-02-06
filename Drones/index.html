@@ -1,46 +1,171 @@
 <!doctype html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <title>Swarm Drones 2D</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-  <div class="ui">
-    <textarea id="textInput" rows="3" placeholder="Texto en varias líneas"> </textarea>
-    <button id="textBtn">Formar texto</button>
-    <button id="drawBtn">Dibujar</button>
-    <button id="clearBtn">Limpiar</button>
+  <!-- Panel derecho siempre visible -->
+  <div class="ui-panel">
+    <div class="panel-header">
+      <h2><i class="fas fa-cogs"></i> Controles</h2>
+    </div>
 
-    <label>
-      Velocidad
-      <input id="speedRange" type="range" min="0.01" max="0.3" step="0.01" value="0.07" />
-    </label>
+    <div class="panel-content">
+      <!-- Texto y Dibujo -->
+      <div class="section">
+        <h3><i class="fas fa-font"></i> Texto</h3>
+        <textarea id="textInput" rows="2" placeholder="Texto...">HOLA</textarea>
+        <div class="button-group">
+          <button id="textBtn" class="btn-primary">
+            <i class="fas fa-text-height"></i> Aplicar
+          </button>
+        </div>
+      </div>
 
-    <label>
-      Radio órbita
-      <input id="orbitRadius" type="range" min="50" max="300" step="10" value="120" />
-    </label>
-    
-    <label>
-      Velocidad órbita
-      <input id="orbitSpeed" type="range" min="0.001" max="0.05" step="0.001" value="0.015" />
-    </label>
+      <!-- Canvas Controls -->
+      <div class="section">
+        <h3><i class="fas fa-paint-brush"></i> Dibujo</h3>
+        <div class="button-group">
+          <button id="drawBtn" class="btn-secondary">
+            <i class="fas fa-paint-brush"></i> Usar Dibujo
+          </button>
+          <button id="clearBtn" class="btn-danger">
+            <i class="fas fa-trash"></i> Limpiar
+          </button>
+        </div>
+      </div>
 
-    <label>
-      Drones
-      <input id="droneCount" type="number" min="50" max="3000" step="50" value="800" />
-    </label>
+      <!-- Movimiento -->
+      <div class="section">
+        <h3><i class="fas fa-tachometer-alt"></i> Movimiento</h3>
+        
+        <div class="control-group">
+          <label>
+            <i class="fas fa-bolt"></i> Velocidad
+            <span id="speedValue" class="value">0.07</span>
+          </label>
+          <input id="speedRange" type="range" min="0.01" max="0.3" step="0.01" value="0.07" />
+        </div>
 
-    <button id="applyDrones">Aplicar</button>
+        <div class="control-group">
+          <label>
+            <i class="fas fa-expand-arrows-alt"></i> Radio Órbita
+            <span id="radiusValue" class="value">120</span>
+          </label>
+          <input id="orbitRadius" type="range" min="50" max="300" step="10" value="120" />
+        </div>
+
+        <div class="control-group">
+          <label>
+            <i class="fas fa-sync-alt"></i> Vel. Órbita
+            <span id="orbitSpeedValue" class="value">0.015</span>
+          </label>
+          <input id="orbitSpeed" type="range" min="0.001" max="0.05" step="0.001" value="0.015" />
+        </div>
+      </div>
+
+      <!-- Colisiones -->
+      <div class="section">
+        <h3><i class="fas fa-shield-alt"></i> Colisiones</h3>
+        
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input id="collisionsToggle" type="checkbox" checked />
+            <span class="checkmark"></span>
+            <span>Activadas</span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>
+            <i class="fas fa-arrows-alt-h"></i> Espacio
+            <span id="personalSpaceValue" class="value">8</span>
+          </label>
+          <input id="personalSpaceRange" type="range" min="4" max="20" step="1" value="8" />
+        </div>
+
+        <div class="control-group">
+          <label>
+            <i class="fas fa-hand-paper"></i> Fuerza
+            <span id="separationForceValue" class="value">0.5</span>
+          </label>
+          <input id="separationForceRange" type="range" min="0.1" max="2.0" step="0.1" value="0.5" />
+        </div>
+      </div>
+
+      <!-- Drones -->
+      <div class="section">
+        <h3><i class="fas fa-drone"></i> Drones</h3>
+        
+        <div class="control-group">
+          <label>
+            <i class="fas fa-hashtag"></i> Cantidad
+          </label>
+          <div class="number-group">
+            <input id="droneCount" type="number" min="50" max="3000" step="50" value="800" />
+            <button id="applyDrones" class="btn-primary small">
+              <i class="fas fa-check"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button id="randomBtn" class="btn-secondary">
+            <i class="fas fa-random"></i> Aleatorio
+          </button>
+          <button id="centerBtn" class="btn-secondary">
+            <i class="fas fa-crosshairs"></i> Centrar
+          </button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="section info">
+        <h3><i class="fas fa-info-circle"></i> Estado</h3>
+        <div class="info-grid" id="infoText">
+          <div class="info-item">
+            <span class="label">Drones:</span>
+            <span class="value">800</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Orbitales:</span>
+            <span class="value">0</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Formación:</span>
+            <span class="value">0</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Colisiones:</span>
+            <span class="value">ON</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shortcuts -->
+      <div class="section shortcuts">
+        <h3><i class="fas fa-keyboard"></i> Atajos</h3>
+        <div class="shortcut-list">
+          <div><kbd>Espacio</kbd> Limpiar</div>
+          <div><kbd>T</kbd> Texto</div>
+          <div><kbd>D</kbd> Dibujar</div>
+          <div><kbd>R</kbd> Aleatorio</div>
+          <div><kbd>C</kbd> Centrar</div>
+          <div><kbd>X</kbd> Colisiones</div>
+          <div><kbd>V</kbd> Debug</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <canvas id="inputCanvas" width="800" height="200"></canvas>
+  <!-- Canvas de dibujo -->
+  <canvas id="inputCanvas" width="400" height="150"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
   <script src="main.js"></script>
 </body>
-
 </html>

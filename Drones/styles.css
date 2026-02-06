@@ -1,3 +1,6 @@
+/* =========================
+   RESET Y BASE
+========================= */
 * {
   margin: 0;
   padding: 0;
@@ -8,49 +11,463 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: black;
-  font-family: system-ui, sans-serif;
+  background: #0a0a0a;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #e0e0e0;
 }
 
+/* Canvas principal */
 canvas:not(#inputCanvas) {
-  width: 100%;
+  width: calc(100% - 320px);
   height: 100%;
   display: block;
 }
 
-.ui {
+/* =========================
+   PANEL DERECHO
+========================= */
+.ui-panel {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100vh;
+  background: rgba(15, 15, 20, 0.95);
+  border-left: 1px solid rgba(0, 150, 200, 0.3);
+  z-index: 100;
+  overflow-y: auto;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  z-index: 10;
-  color: white;
+  flex-direction: column;
 }
 
-.ui input,
-.ui textarea,
-.ui button,
-.ui label {
-  padding: 6px 8px;
-  background: #111;
-  border: 1px solid #333;
-  color: white;
-  font-size: 13px;
+.panel-header {
+  background: linear-gradient(135deg, #001d3d, #00264d);
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(0, 150, 200, 0.3);
 }
 
-.ui label {
+.panel-header h2 {
+  color: #00b4d8;
+  font-size: 16px;
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+
+.panel-content {
+  flex: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+/* =========================
+   SECCIONES
+========================= */
+.section {
+  background: rgba(25, 25, 35, 0.7);
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section h3 {
+  color: #00b4d8;
+  font-size: 14px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 150, 200, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* =========================
+   CONTROLES DE FORMULARIO
+========================= */
+textarea {
+  width: 100%;
+  background: rgba(10, 10, 15, 0.9);
+  border: 1px solid rgba(0, 150, 200, 0.3);
+  border-radius: 6px;
+  color: white;
+  padding: 10px;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 60px;
+  margin-bottom: 10px;
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #00b4d8;
+}
+
+input[type="number"] {
+  background: rgba(10, 10, 15, 0.9);
+  border: 1px solid rgba(0, 150, 200, 0.3);
+  border-radius: 6px;
+  color: white;
+  padding: 8px 10px;
+  font-size: 13px;
+  width: 100%;
+  font-family: inherit;
+}
+
+.number-group {
+  display: flex;
+  gap: 8px;
+}
+
+.number-group input {
+  flex: 1;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0077b6, #0096c7);
+  color: white;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #c1121f, #e63946);
+  color: white;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active, .btn-secondary:active, .btn-danger:active {
+  transform: translateY(0);
+}
+
+.btn-primary.small {
+  padding: 8px 10px;
+  min-width: 40px;
+}
+
+/* =========================
+   GRUPOS DE CONTROL
+========================= */
+.control-group {
+  margin-bottom: 12px;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #b0b0b0;
+}
+
+.control-group label i {
+  color: #00b4d8;
+  width: 16px;
+  font-size: 12px;
+}
+
+.value {
+  background: rgba(0, 150, 200, 0.15);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #00b4d8;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* =========================
+   SLIDERS
+========================= */
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #00b4d8;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 180, 216, 0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #00b4d8;
+  cursor: pointer;
+  border: none;
+}
+
+/* =========================
+   CHECKBOX
+========================= */
+.checkbox-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0 !important;
+}
+
+.checkbox-label input {
+  display: none;
+}
+
+.checkmark {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.checkbox-label input:checked + .checkmark {
+  background: #00b4d8;
+}
+
+.checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 3px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label input:checked + .checkmark:after {
+  display: block;
+}
+
+/* =========================
+   INFORMACIÓN
+========================= */
+.section.info {
+  background: rgba(0, 40, 80, 0.3);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-item:last-child,
+.info-item:nth-last-child(2) {
+  border-bottom: none;
+}
+
+.info-item .label {
+  color: #b0b0b0;
+  font-size: 12px;
+}
+
+.info-item .value {
+  background: none;
+  padding: 0;
+  min-width: auto;
+  color: #00b4d8;
+}
+
+/* =========================
+   ATAJOS
+========================= */
+.section.shortcuts {
+  background: rgba(30, 30, 40, 0.7);
+}
+
+.shortcut-list {
+  display: grid;
   gap: 6px;
 }
 
+.shortcut-list div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #b0b0b0;
+}
+
+.shortcut-list kbd {
+  background: rgba(0, 30, 60, 0.8);
+  color: #00b4d8;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  min-width: 35px;
+  text-align: center;
+  border: 1px solid rgba(0, 150, 200, 0.3);
+}
+
+/* =========================
+   CANVAS DE DIBUJO
+========================= */
 #inputCanvas {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  border: 1px solid #333;
-  background: black;
+  border: 2px solid rgba(0, 150, 200, 0.3);
+  background: rgba(0, 0, 0, 0.8);
   cursor: crosshair;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+.panel-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 150, 200, 0.5);
+  border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 150, 200, 0.7);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1200px) {
+  .ui-panel {
+    width: 280px;
+  }
+  
+  canvas:not(#inputCanvas) {
+    width: calc(100% - 280px);
+  }
+}
+
+@media (max-width: 768px) {
+  .ui-panel {
+    width: 260px;
+  }
+  
+  canvas:not(#inputCanvas) {
+    width: calc(100% - 260px);
+  }
+  
+  .panel-content {
+    padding: 12px;
+  }
+  
+  .section {
+    padding: 12px;
+  }
+  
+  #inputCanvas {
+    width: calc(100% - 280px);
+    height: 120px;
+    left: 10px;
+    bottom: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ui-panel {
+    width: 100%;
+    height: 40vh;
+    top: auto;
+    bottom: 0;
+    border-left: none;
+    border-top: 1px solid rgba(0, 150, 200, 0.3);
+  }
+  
+  canvas:not(#inputCanvas) {
+    width: 100%;
+    height: 60vh;
+  }
+  
+  .panel-header {
+    padding: 10px 15px;
+  }
+  
+  .panel-content {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  #inputCanvas {
+    width: calc(100% - 20px);
+    height: 100px;
+    left: 10px;
+    bottom: calc(40vh + 10px);
+  }
+  
+  .button-group {
+    grid-template-columns: 1fr;
+  }
 }
