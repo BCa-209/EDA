@@ -6,13 +6,14 @@ const scene = new THREE.Scene();
 let width = window.innerWidth;
 let height = window.innerHeight;
 
+
 const camera = new THREE.OrthographicCamera(
   width / -2,
   width / 2,
   height / 2,
   height / -2,
   0.1,
-  1000
+  1000,
 );
 camera.position.z = 10;
 
@@ -31,12 +32,13 @@ let swarm;
 let baseRadius = 120;
 let baseSpeed = 0.015;
 
-document.getElementById("orbitRadius").oninput = e =>
-  (baseRadius = parseFloat(e.target.value));
+document.getElementById("orbitRadius").oninput = (e) => {
+  baseRadius = parseFloat(e.target.value);
+};
 
-document.getElementById("orbitSpeed").oninput = e =>
-  (baseSpeed = parseFloat(e.target.value));
-
+document.getElementById("orbitSpeed").oninput = (e) => {
+  baseSpeed = parseFloat(e.target.value);
+};
 /* =========================
    CANVAS INPUT
 ========================= */
@@ -48,7 +50,7 @@ function clearInputCanvas() {
 }
 
 /* =========================
-   CANVAS → PUNTOS (DENSIDAD ADAPTATIVA)
+   TEXTO / CANVAS → PUNTOS
 ========================= */
 function canvasToPoints() {
   const img = inputCtx.getImageData(
@@ -58,11 +60,13 @@ function canvasToPoints() {
     inputCanvas.height
   );
 
+  // Contar píxeles activos
   let activePixels = 0;
   for (let i = 3; i < img.data.length; i += 4) {
     if (img.data[i] > 128) activePixels++;
   }
 
+  // Densidad adaptativa
   let step = 6;
   if (activePixels < 6000) step = 3;
   if (activePixels < 3000) step = 2;
@@ -75,7 +79,7 @@ function canvasToPoints() {
       if (img.data[i + 3] > 128) {
         points.push({
           x: x - inputCanvas.width / 2,
-          y: inputCanvas.height / 2 - y
+          y: inputCanvas.height / 2 - y,
         });
       }
     }
@@ -84,13 +88,11 @@ function canvasToPoints() {
   return points;
 }
 
-/* =========================
-   TEXTO MULTILÍNEA → PUNTOS
-========================= */
 function textToPoints(text) {
   clearInputCanvas();
 
   const lines = text.split("\n");
+
   const maxWidth = inputCanvas.width * 0.9;
   const maxHeight = inputCanvas.height * 0.9;
 
@@ -100,32 +102,35 @@ function textToPoints(text) {
   inputCtx.textAlign = "center";
   inputCtx.textBaseline = "middle";
   inputCtx.fillStyle = "white";
-  inputCtx.strokeStyle = "white";
 
+  // Ajustar tamaño para que TODAS las líneas quepan
   while (fontSize > 20) {
     inputCtx.font = `bold ${fontSize}px Arial`;
 
-    const widest = Math.max(
+    const widestLine = Math.max(
       ...lines.map(l => inputCtx.measureText(l).width)
     );
 
     const totalHeight = lines.length * fontSize * lineSpacing;
 
-    if (widest <= maxWidth && totalHeight <= maxHeight) break;
+    if (widestLine <= maxWidth && totalHeight <= maxHeight) break;
+
     fontSize--;
   }
 
+  // Centrado vertical real
   const startY =
     inputCanvas.height / 2 -
     ((lines.length - 1) * fontSize * lineSpacing) / 2;
 
   lines.forEach((line, i) => {
-    const y = startY + i * fontSize * lineSpacing;
+  const y = startY + i * fontSize * lineSpacing;
 
-    inputCtx.lineWidth = 2;
-    inputCtx.strokeText(line, inputCanvas.width / 2, y);
-    inputCtx.fillText(line, inputCanvas.width / 2, y);
-  });
+  inputCtx.lineWidth = 2;
+  inputCtx.strokeStyle = "white";
+  inputCtx.strokeText(line, inputCanvas.width / 2, y);
+  inputCtx.fillText(line, inputCanvas.width / 2, y);
+});
 
   return canvasToPoints();
 }
@@ -137,18 +142,18 @@ let drawing = false;
 let lastX = 0;
 let lastY = 0;
 
-inputCanvas.addEventListener("mousedown", e => {
+inputCanvas.addEventListener("mousedown", (e) => {
   drawing = true;
   const r = inputCanvas.getBoundingClientRect();
   lastX = e.clientX - r.left;
   lastY = e.clientY - r.top;
 });
 
-["mouseup", "mouseleave"].forEach(ev =>
-  inputCanvas.addEventListener(ev, () => (drawing = false))
+["mouseup", "mouseleave"].forEach((ev) =>
+  inputCanvas.addEventListener(ev, () => (drawing = false)),
 );
 
-inputCanvas.addEventListener("mousemove", e => {
+inputCanvas.addEventListener("mousemove", (e) => {
   if (!drawing) return;
 
   const r = inputCanvas.getBoundingClientRect();
@@ -178,14 +183,18 @@ class Drone {
     this.mesh = new THREE.Mesh(g, m);
     this.mesh.position.set(x, y, 0);
     this.target = new THREE.Vector3(x, y, 0);
-    this.isOrbiting = false;
+    this.isOrbiting = false; // Nuevo flag
   }
 
   update() {
     this.mesh.position.lerp(this.target, droneSpeed);
-    this.mesh.material.color.setHex(
-      this.isOrbiting ? 0x00ffff : 0xffffff
-    );
+
+    // Opcional: Cambiar color si está en órbita
+    if (this.isOrbiting) {
+      this.mesh.material.color.setHex(0x00ffff); // Cian para drones orbitales
+    } else {
+      this.mesh.material.color.setHex(0xffffff); // Blanco para drones en formación
+    }
   }
 }
 
@@ -195,10 +204,6 @@ class Drone {
 class Swarm {
   constructor(count) {
     this.drones = [];
-    this.orbitDrones = [];
-    this.orbitCenter = new THREE.Vector3();
-    this.orbitTime = 0;
-
     for (let i = 0; i < count; i++) {
       const x = Math.random() * width - width / 2;
       const y = Math.random() * height - height / 2;
@@ -206,55 +211,104 @@ class Swarm {
       this.drones.push(d);
       scene.add(d.mesh);
     }
+    this.orbitDrones = []; // Índices de drones en órbita
+    this.orbitCenter = new THREE.Vector3(0, 0, 0);
+    this.orbitTime = 0;
+    this.currentPoints = []; // Para restaurar después de aplicar nuevos drones
   }
 
   dispose() {
-    this.drones.forEach(d => scene.remove(d.mesh));
+    this.drones.forEach((d) => scene.remove(d.mesh));
   }
 
   setFormation(points) {
-    this.orbitDrones = [];
-
-    this.drones.forEach((d, i) => {
-      if (i < points.length) {
-        const p = points[i];
-        d.target.set(p.x, p.y, 0);
-        d.isOrbiting = false;
-      } else {
-        d.isOrbiting = true;
-        this.orbitDrones.push(i);
-      }
+    // Guardar puntos actuales
+    this.currentPoints = [...points];
+    
+    // Resetear todos los drones
+    this.drones.forEach((d) => {
+      d.isOrbiting = false;
     });
 
-    if (points.length) {
-      const c = points.reduce(
-        (a, p) => ({ x: a.x + p.x, y: a.y + p.y }),
-        { x: 0, y: 0 }
+    // Distribuir drones uniformemente
+    this.orbitDrones = [];
+    
+    // Calcular cuántos drones por punto
+    const dronesPerPoint = Math.max(1, Math.floor(this.drones.length / Math.max(points.length, 1)));
+    
+    for (let i = 0; i < this.drones.length; i++) {
+      const drone = this.drones[i];
+      
+      if (i < points.length * dronesPerPoint && points.length > 0) {
+        // Asignar a punto de formación
+        const pointIndex = Math.floor(i / dronesPerPoint) % points.length;
+        const p = points[pointIndex];
+        drone.target.set(p.x, p.y, 0);
+        drone.isOrbiting = false;
+      } else {
+        // Este drone será orbital
+        drone.isOrbiting = true;
+        this.orbitDrones.push(i);
+      }
+    }
+
+    // Calcular centro de la formación para órbita
+    if (points.length > 0) {
+      const sum = points.reduce(
+        (acc, p) => {
+          acc.x += p.x;
+          acc.y += p.y;
+          return acc;
+        },
+        { x: 0, y: 0 },
       );
-      this.orbitCenter.set(c.x / points.length, c.y / points.length, 0);
+
+      this.orbitCenter.set(sum.x / points.length, sum.y / points.length, 0);
+    } else {
+      // Si no hay puntos, centro en pantalla
+      this.orbitCenter.set(0, 0, 0);
     }
   }
 
   update() {
+    // Incrementar tiempo para animación orbital
     this.orbitTime += 0.05;
 
-    this.drones.forEach((d, i) => {
-      if (d.isOrbiting) {
-        const idx = this.orbitDrones.indexOf(i);
-        const radius = baseRadius + (idx % 8) * 25;
-        const speed = baseSpeed + (idx % 13) * 0.003;
-        const angle = this.orbitTime * speed + idx * 0.15;
+    // Actualizar drones
+    for (let i = 0; i < this.drones.length; i++) {
+      const d = this.drones[i];
 
-        d.target.x = this.orbitCenter.x + Math.cos(angle) * radius;
-        d.target.y = this.orbitCenter.y + Math.sin(angle) * radius;
-      }
+      if (d.isOrbiting) {
+  const orbitIndex = this.orbitDrones.indexOf(i);
+  
+  // Efecto de pulso en el radio
+  const pulse = Math.sin(this.orbitTime * 0.3) * 0.15 + 1; // Entre 0.85 y 1.15
+  
+  // USAR LAS VARIABLES GLOBALES baseRadius y baseSpeed
+  const radiusVariation = (orbitIndex % 8) * 25;
+  const orbitRadius = (baseRadius + radiusVariation) * pulse; // Con pulso
+
+  const speedVariation = (orbitIndex % 13) * 0.003;
+  const orbitSpeed = baseSpeed + speedVariation;
+
+  // Ángulo con desfase único por drone
+  const angle = this.orbitTime * orbitSpeed + orbitIndex * 0.15;
+
+  // Posición orbital con pequeña variación aleatoria
+  const wobbleX = Math.sin(this.orbitTime * 0.2 + orbitIndex) * 8;
+  const wobbleY = Math.cos(this.orbitTime * 0.25 + orbitIndex) * 8;
+  
+  d.target.x = this.orbitCenter.x + Math.cos(angle) * orbitRadius + wobbleX;
+  d.target.y = this.orbitCenter.y + Math.sin(angle) * orbitRadius + wobbleY;
+}
+
       d.update();
-    });
+    }
   }
 }
 
 /* =========================
-   UI
+   UI CONTROLS
 ========================= */
 document.getElementById("textBtn").onclick = () => {
   const t = document.getElementById("textInput").value;
@@ -268,20 +322,30 @@ document.getElementById("drawBtn").onclick = () => {
 
 document.getElementById("clearBtn").onclick = clearInputCanvas;
 
-document.getElementById("speedRange").oninput = e =>
-  (droneSpeed = parseFloat(e.target.value));
+document.getElementById("speedRange").oninput = (e) => {
+  droneSpeed = parseFloat(e.target.value);
+};
 
 document.getElementById("applyDrones").onclick = () => {
   droneCount = parseInt(document.getElementById("droneCount").value);
+  const oldPoints = swarm.currentPoints; // Guardar formación actual
   swarm.dispose();
   swarm = new Swarm(droneCount);
+  
+  // Restaurar formación si existía
+  if (oldPoints && oldPoints.length > 0) {
+    setTimeout(() => swarm.setFormation(oldPoints), 100);
+  }
 };
 
 /* =========================
-   INIT & LOOP
+   INIT
 ========================= */
 swarm = new Swarm(droneCount);
 
+/* =========================
+   LOOP
+========================= */
 function animate() {
   requestAnimationFrame(animate);
   swarm.update();
