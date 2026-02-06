@@ -1,35 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Swarm Drones 2D</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
 
+<body>
   <div class="ui">
-    <input id="textInput" type="text" placeholder="Escribe una palabra" />
+    <textarea id="textInput" rows="3" placeholder="Texto en varias líneas"> </textarea>
     <button id="textBtn">Formar texto</button>
     <button id="drawBtn">Dibujar</button>
     <button id="clearBtn">Limpiar</button>
 
     <label>
       Velocidad
-      <input id="speedRange" type="range" min="0.01" max="0.3" step="0.01" value="0.07">
+      <input id="speedRange" type="range" min="0.01" max="0.3" step="0.01" value="0.07" />
+    </label>
+
+    <label>
+      Radio órbita
+      <input id="orbitRadius" type="range" min="50" max="300" step="10" value="120" />
+    </label>
+    
+    <label>
+      Velocidad órbita
+      <input id="orbitSpeed" type="range" min="0.001" max="0.05" step="0.001" value="0.015" />
     </label>
 
     <label>
       Drones
-      <input id="droneCount" type="number" min="50" max="3000" step="50" value="800">
+      <input id="droneCount" type="number" min="50" max="3000" step="50" value="800" />
     </label>
 
     <button id="applyDrones">Aplicar</button>
   </div>
 
-  <canvas id="inputCanvas" width="400" height="200"></canvas>
+  <canvas id="inputCanvas" width="800" height="200"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
   <script src="main.js"></script>
-
 </body>
+
 </html>

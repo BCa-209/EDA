@@ -30,6 +30,7 @@ canvas:not(#inputCanvas) {
 }
 
 .ui input,
+.ui textarea,
 .ui button,
 .ui label {
   padding: 6px 8px;
