@@ -1,13 +1,11 @@
-/* =========================
-   RESET Y BASE
-========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -85,6 +83,37 @@ canvas:not(#inputCanvas) {
 }
 
 /* =========================
+   BOTONES DE FIGURAS
+========================= */
+#figureButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+#figureButtons button {
+  padding: 8px 6px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  min-height: 50px;
+}
+
+#figureButtons button i {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+#figureButtons button.active {
+  background: linear-gradient(135deg, #0096c7, #00b4d8);
+  border-color: #00b4d8;
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+}
+
+/* =========================
    CONTROLES DE FORMULARIO
 ========================= */
 textarea {
@@ -136,7 +165,9 @@ input[type="number"] {
   margin-top: 5px;
 }
 
-.btn-primary, .btn-secondary, .btn-danger {
+.btn-primary,
+.btn-secondary,
+.btn-danger {
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
@@ -166,12 +197,16 @@ input[type="number"] {
   color: white;
 }
 
-.btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover {
   transform: translateY(-1px);
   filter: brightness(1.1);
 }
 
-.btn-primary:active, .btn-secondary:active, .btn-danger:active {
+.btn-primary:active,
+.btn-secondary:active,
+.btn-danger:active {
   transform: translateY(0);
 }
 
@@ -272,7 +307,7 @@ input[type="range"]::-moz-range-thumb {
   transition: all 0.2s;
 }
 
-.checkbox-label input:checked + .checkmark {
+.checkbox-label input:checked+.checkmark {
   background: #00b4d8;
 }
 
@@ -289,7 +324,7 @@ input[type="range"]::-moz-range-thumb {
   transform: rotate(45deg);
 }
 
-.checkbox-label input:checked + .checkmark:after {
+.checkbox-label input:checked+.checkmark:after {
   display: block;
 }
 
@@ -405,9 +440,13 @@ input[type="range"]::-moz-range-thumb {
   .ui-panel {
     width: 280px;
   }
-  
+
   canvas:not(#inputCanvas) {
     width: calc(100% - 280px);
+  }
+
+  #figureButtons {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -415,19 +454,19 @@ input[type="range"]::-moz-range-thumb {
   .ui-panel {
     width: 260px;
   }
-  
+
   canvas:not(#inputCanvas) {
     width: calc(100% - 260px);
   }
-  
+
   .panel-content {
     padding: 12px;
   }
-  
+
   .section {
     padding: 12px;
   }
-  
+
   #inputCanvas {
     width: calc(100% - 280px);
     height: 120px;
@@ -445,29 +484,33 @@ input[type="range"]::-moz-range-thumb {
     border-left: none;
     border-top: 1px solid rgba(0, 150, 200, 0.3);
   }
-  
+
   canvas:not(#inputCanvas) {
     width: 100%;
     height: 60vh;
   }
-  
+
   .panel-header {
     padding: 10px 15px;
   }
-  
+
   .panel-content {
     padding: 10px;
     gap: 10px;
   }
-  
+
   #inputCanvas {
     width: calc(100% - 20px);
     height: 100px;
     left: 10px;
     bottom: calc(40vh + 10px);
   }
-  
+
   .button-group {
     grid-template-columns: 1fr;
+  }
+
+  #figureButtons {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

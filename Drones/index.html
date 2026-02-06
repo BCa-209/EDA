@@ -15,6 +15,41 @@
     </div>
 
     <div class="panel-content">
+      <!-- Figuras desde JSON -->
+      <div class="section">
+        <h3><i class="fas fa-shapes"></i> Figuras desde JSON</h3>
+        <div class="button-group" id="figureButtons">
+          <button class="btn-secondary" data-figure="mascara" style="background: rgba(255, 87, 51, 0.2); border-color: #FF5733;">
+            <i class="fas fa-mask"></i> Máscara (1)
+          </button>
+          <button class="btn-secondary" data-figure="logo_escuela" style="background: rgba(51, 161, 255, 0.2); border-color: #33A1FF;">
+            <i class="fas fa-graduation-cap"></i> Escuela (2)
+          </button>
+          <button class="btn-secondary" data-figure="logo_universidad" style="background: rgba(157, 51, 255, 0.2); border-color: #9D33FF;">
+            <i class="fas fa-university"></i> Universidad (3)
+          </button>
+          <button class="btn-secondary" data-figure="estrella" style="background: rgba(255, 255, 51, 0.2); border-color: #FFFF33;">
+            <i class="fas fa-star"></i> Estrella (4)
+          </button>
+        </div>
+      </div>
+
+      <!-- Ajuste de Escala -->
+      <div class="section">
+        <h3><i class="fas fa-search"></i> Ajuste de Escala</h3>
+        <div class="button-group" style="grid-template-columns: repeat(3, 1fr);">
+          <button id="scaleUpBtn" class="btn-secondary">
+            <i class="fas fa-search-plus"></i> Agrandar
+          </button>
+          <button id="scaleDownBtn" class="btn-secondary">
+            <i class="fas fa-search-minus"></i> Reducir
+          </button>
+          <button id="resetScaleBtn" class="btn-secondary">
+            <i class="fas fa-redo"></i> Original
+          </button>
+        </div>
+      </div>
+
       <!-- Texto y Dibujo -->
       <div class="section">
         <h3><i class="fas fa-font"></i> Texto</h3>
@@ -126,22 +161,32 @@
       <!-- Info -->
       <div class="section info">
         <h3><i class="fas fa-info-circle"></i> Estado</h3>
-        <div class="info-grid" id="infoText">
+        <div class="info-grid">
           <div class="info-item">
             <span class="label">Drones:</span>
-            <span class="value">800</span>
+            <span id="droneCountValue" class="value">800</span>
           </div>
           <div class="info-item">
             <span class="label">Orbitales:</span>
-            <span class="value">0</span>
+            <span id="orbitalCountValue" class="value">0</span>
           </div>
           <div class="info-item">
             <span class="label">Formación:</span>
-            <span class="value">0</span>
+            <span id="formationCountValue" class="value">0</span>
           </div>
           <div class="info-item">
             <span class="label">Colisiones:</span>
-            <span class="value">ON</span>
+            <span id="collisionsStatus" class="value">ON</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Figura:</span>
+            <span id="currentFigure" class="value">Ninguna</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Color:</span>
+            <span class="value">
+              <div id="currentColor" style="display: inline-block; width: 15px; height: 15px; border-radius: 3px; background: #fff; border: 1px solid rgba(255,255,255,0.3);"></div>
+            </span>
           </div>
         </div>
       </div>
@@ -150,13 +195,19 @@
       <div class="section shortcuts">
         <h3><i class="fas fa-keyboard"></i> Atajos</h3>
         <div class="shortcut-list">
+          <div><kbd>1</kbd> Máscara</div>
+          <div><kbd>2</kbd> Escuela</div>
+          <div><kbd>3</kbd> Universidad</div>
+          <div><kbd>4</kbd> Estrella</div>
           <div><kbd>Espacio</kbd> Limpiar</div>
           <div><kbd>T</kbd> Texto</div>
           <div><kbd>D</kbd> Dibujar</div>
           <div><kbd>R</kbd> Aleatorio</div>
           <div><kbd>C</kbd> Centrar</div>
           <div><kbd>X</kbd> Colisiones</div>
-          <div><kbd>V</kbd> Debug</div>
+          <div><kbd>Ctrl +</kbd> Agrandar</div>
+          <div><kbd>Ctrl -</kbd> Reducir</div>
+          <div><kbd>F5</kbd> Reset Escala</div>
         </div>
       </div>
     </div>
@@ -166,6 +217,6 @@
   <canvas id="inputCanvas" width="400" height="150"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="main.js"></script>
+  <script src="main2.js"></script>
 </body>
 </html>
