@@ -174,37 +174,21 @@ int main() {
     Lista liss;
 
     // Llenamos la lista: 10 -> 20 -> 30 -> 40 -> 50
-    liss.add(50);
-    liss.add(40);
-    liss.add(30);
-    liss.add(20);
     liss.add(10);
+    //liss.add(40);
+    //liss.add(30);
+    //liss.add(20);
+    //liss.add(10);
 
     cout << "--- Lista Inicial ---" << endl;
     liss.print();
-
-    cout << "\nInsertando 99 en la posicion 2..." << endl;
-    liss.addPos(99, 2);
-    liss.print();
-
-    cout << "\nInsertando 5 en la posicion 4..." << endl;
-    liss.addPos(5, 4);
-    liss.print();
-
+    
     cout << "\nInsertando 25 al inicio..." << endl;
-    liss.addIni(25);
+    liss.addIni(5);
     liss.print();
 
-    cout << "\nUsando dropIni() (elimina el primer nodo):" << endl;
-    liss.dropIni();
-    liss.print();
-
-    cout << "\nUsando drop() (elimina el ultimo nodo):" << endl;
-    liss.drop();
-    liss.print();
-
-    cout << "\nUsando dropPos(2) (elimina el nodo en indice 2):" << endl;
-    liss.dropPos(2);
+    cout << "\nInsertando 7 en la posicion 1..." << endl;
+    liss.addPos(7, 1);
     liss.print();
 
     return 0;

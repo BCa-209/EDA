@@ -235,28 +235,18 @@ public:
 };
 
 int main() {
-    Cola liss;
-
     cout << "--------AHORA CON COLA---------" << endl;
     // Llenamos la lista
-    liss.encolar(1);
-    liss.encolar(2);
-    liss.encolar(3);
-    liss.mostrarCola();
-    liss.desencolar();
-    liss.desencolar();
-    liss.mostrarCola();
+    Cola cola;
+    cola.encolar(1);
+    cola.mostrarCola();
+    cola.encolar(2);
+    cola.mostrarCola();
+    cola.encolar(3);    // 1 -> 2 -> 3
+    cola.mostrarCola();
+    cola.desencolar();  // 2 -> 3
+    cola.mostrarCola();
 
-    cout << "--------AHORA CON PILA---------" << endl;
-
-    Pila pila;
-    pila.enpilar(10);
-    pila.enpilar(20);
-    pila.enpilar(30);
-    pila.mostrarPila();
-    pila.despilar();
-    pila.despilar();
-    pila.mostrarPila();
 
     return 0;
 }
