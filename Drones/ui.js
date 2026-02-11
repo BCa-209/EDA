@@ -8,7 +8,6 @@ import { canvasToPoints, textToPoints } from './utils.js';
 export function setupUI(swarm, recreateSwarmCallback) {
     const inputCanvas = document.getElementById("inputCanvas");
     
-    // Función para redimensionar canvas de dibujo
     const resizeCanvas = () => {
         inputCanvas.width = Math.min(800, window.innerWidth - 40);
         inputCanvas.height = 200;
@@ -38,13 +37,18 @@ export function setupUI(swarm, recreateSwarmCallback) {
     document.getElementById("drawBtn").onclick = () => {
         const points = canvasToPoints(inputCanvas);
         params.currentFigure = null;
-        swarm.setFormation(points, 0xffffff);
+        
+        // CORREGIDO: Pasar null como nombre de figura
+        swarm.setFormation(points, 0xffffff, null);
         updateStats(swarm);
     };
 
     document.getElementById("clearBtn").onclick = () => {
         ctx.clearRect(0, 0, inputCanvas.width, inputCanvas.height);
-        swarm.setFormation([], 0xffffff);
+        params.currentFigure = null;
+        
+        // CORREGIDO: Limpiar formación
+        swarm.setFormation([], 0xffffff, null);
         updateStats(swarm);
     };
 
@@ -53,7 +57,9 @@ export function setupUI(swarm, recreateSwarmCallback) {
         const txt = document.getElementById("textInput").value;
         const points = textToPoints(txt, inputCanvas);
         params.currentFigure = null;
-        swarm.setFormation(points, 0xffffff);
+        
+        // CORREGIDO: Pasar null como nombre de figura
+        swarm.setFormation(points, 0xffffff, null);
         updateStats(swarm);
     };
 
@@ -62,11 +68,14 @@ export function setupUI(swarm, recreateSwarmCallback) {
         btn.onclick = async () => {
             const name = btn.dataset.figure;
             const data = await loadFigureFromJSON(name, params.droneCount);
+            
+            // CORREGIDO: Actualizar params y swarm correctamente
             params.currentFigure = name;
-            swarm.setFormation(data.points, data.color);
+            
+            // CORREGIDO: Pasar el nombre de la figura
+            swarm.setFormation(data.points, data.color, name);
             updateStats(swarm);
             
-            // UI Feedback
             document.querySelectorAll('#figureButtons button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         };
@@ -75,15 +84,13 @@ export function setupUI(swarm, recreateSwarmCallback) {
     // --- Sliders y Parámetros ---
     const bindSlider = (id, paramKey) => {
         const el = document.getElementById(id);
-        const valueId = id + 'Value'; // Asegurar que el ID del span sea correcto
+        const valueId = id + 'Value';
         
-        // Inicializar valor mostrado
         const label = document.getElementById(valueId);
         if(label) label.textContent = params[paramKey].toFixed(3);
         
         el.oninput = (e) => {
             params[paramKey] = parseFloat(e.target.value);
-            // Actualizar label
             if(label) label.textContent = params[paramKey].toFixed(3);
         };
     };
@@ -100,35 +107,108 @@ export function setupUI(swarm, recreateSwarmCallback) {
     };
 
     // --- Gestión de Cantidad de Drones ---
-    document.getElementById("applyDrones").onclick = () => {
-        const count = parseInt(document.getElementById("droneCount").value);
-        if(count > 0 && count <= 5000) {
-            params.droneCount = count;
-            recreateSwarmCallback(count); // Llamada al main para reiniciar
+    // --- Gestión de Cantidad de Drones ---
+document.getElementById("applyDrones").onclick = async () => {
+    const count = parseInt(document.getElementById("droneCount").value);
+    if(count > 0 && count <= 5000) {
+        params.droneCount = count;
+        
+        // Guardar TODA la información actual
+        const currentFormation = {
+            points: swarm.currentPoints || [],
+            color: swarm.formationColor || 0xffffff,
+            figureName: swarm.currentFigureName || params.currentFigure,
+            mode: swarm.mode
+        };
+        
+        console.log("=== ANTES DE RECREAR ENJAMBRE ===");
+        console.log("Figura actual:", currentFormation.figureName);
+        console.log("Puntos:", currentFormation.points.length);
+        console.log("Color:", currentFormation.color.toString(16));
+        console.log("Modo:", currentFormation.mode);
+        
+        // Si hay una figura activa, recargarla
+        let figureData = null;
+        if (currentFormation.figureName) {
+            console.log("Recargando figura desde JSON...");
+            figureData = await loadFigureFromJSON(currentFormation.figureName, count);
+            console.log("Figura recargada con", figureData.points.length, "puntos");
         }
-    };
+        
+        // Recrear swarm y esperar a que esté listo
+        await recreateSwarm(count);
+        
+        console.log("=== DESPUÉS DE RECREAR ENJAMBRE ===");
+        console.log("Swarm nuevo figureName:", swarm.currentFigureName);
+        console.log("Swarm activeMode disponible:", swarm.activeMode ? "Sí" : "No");
+        
+        // Solo restaurar si había una figura activa
+        if (figureData && currentFormation.figureName) {
+            console.log("Aplicando formación restaurada...");
+            
+            // Usar los datos recargados de la figura
+            swarm.setFormation(
+                figureData.points, 
+                figureData.color,
+                currentFormation.figureName
+            );
+            
+            // Actualizar parámetros
+            params.currentFigure = currentFormation.figureName;
+            
+            // Actualizar botón activo
+            document.querySelectorAll('#figureButtons button').forEach(b => {
+                b.classList.remove('active');
+                if (b.dataset.figure === currentFormation.figureName) {
+                    b.classList.add('active');
+                }
+            });
+            
+            console.log(`Figura ${currentFormation.figureName} restaurada con éxito`);
+        } else if (currentFormation.points.length > 0) {
+            // Si había puntos manuales (dibujo/texto)
+            console.log("Restaurando puntos manuales...");
+            swarm.setFormation(
+                currentFormation.points,
+                currentFormation.color,
+                null
+            );
+        } else {
+            console.log("No hay formación para restaurar");
+        }
+        
+        // Actualizar estadísticas
+        updateStats(swarm);
+    }
+};
 
     // --- Botones Extra ---
     document.getElementById("randomBtn").onclick = () => {
-        swarm.setFormation([], 0xffffff);
+        params.currentFigure = null;
+        swarm.setFormation([], 0xffffff, null);
         updateStats(swarm);
     };
 
     document.getElementById("centerBtn").onclick = () => {
-        swarm.drones.forEach(d => { d.target.set(0,0,0); d.isOrbiting = false; });
+        swarm.drones.forEach(d => { 
+            d.target.set(0, 0, 0); 
+            d.isOrbiting = false; 
+        });
     };
 
     document.getElementById("scaleUpBtn").onclick = () => {
-        if (params.currentFigure && swarm.currentPoints) {
-            // Escalar todos los puntos un 20% más
-            const scaledPoints = swarm.currentPoints.map(p => ({
+        if (swarm.activeMode && swarm.activeMode.currentPoints && swarm.activeMode.currentPoints.length > 0) {
+            const currentPoints = swarm.activeMode.currentPoints;
+            const scaledPoints = currentPoints.map(p => ({
                 x: p.x * 1.2,
                 y: p.y * 1.2
             }));
-            swarm.setFormation(scaledPoints, swarm.drones[0]?.originalColor || 0xffffff);
+            const color = swarm.activeMode.currentColor || 0xffffff;
+            const figureName = swarm.activeMode.currentFigureName || null;
+            
+            swarm.setFormation(scaledPoints, color, figureName);
             updateStats(swarm);
         } else {
-            // Si no hay figura, escalar todos los drones aleatoriamente
             swarm.drones.forEach(d => {
                 d.target.x *= 1.2;
                 d.target.y *= 1.2;
@@ -137,16 +217,18 @@ export function setupUI(swarm, recreateSwarmCallback) {
     };
 
     document.getElementById("scaleDownBtn").onclick = () => {
-        if (params.currentFigure && swarm.currentPoints) {
-            // Escalar todos los puntos un 20% menos
-            const scaledPoints = swarm.currentPoints.map(p => ({
+        if (swarm.activeMode && swarm.activeMode.currentPoints && swarm.activeMode.currentPoints.length > 0) {
+            const currentPoints = swarm.activeMode.currentPoints;
+            const scaledPoints = currentPoints.map(p => ({
                 x: p.x * 0.8,
                 y: p.y * 0.8
             }));
-            swarm.setFormation(scaledPoints, swarm.drones[0]?.originalColor || 0xffffff);
+            const color = swarm.activeMode.currentColor || 0xffffff;
+            const figureName = swarm.activeMode.currentFigureName || null;
+            
+            swarm.setFormation(scaledPoints, color, figureName);
             updateStats(swarm);
         } else {
-            // Si no hay figura, escalar todos los drones aleatoriamente
             swarm.drones.forEach(d => {
                 d.target.x *= 0.8;
                 d.target.y *= 0.8;
@@ -156,20 +238,17 @@ export function setupUI(swarm, recreateSwarmCallback) {
 
     document.getElementById("resetScaleBtn").onclick = async () => {
         if (params.currentFigure) {
-            // Recargar la figura original
             const data = await loadFigureFromJSON(params.currentFigure, params.droneCount);
-            swarm.setFormation(data.points, data.color);
+            swarm.setFormation(data.points, data.color, params.currentFigure);
             updateStats(swarm);
         } else {
-            // Si no hay figura, volver a posición aleatoria
-            swarm.setFormation([], 0xffffff);
+            swarm.setFormation([], 0xffffff, null);
             updateStats(swarm);
         }
     };
 
     // --- Atajos de Teclado ---
     document.addEventListener('keydown', (e) => {
-        // Evitar atajos cuando se está escribiendo en inputs/textarea
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         
         switch(e.key.toLowerCase()) {
@@ -187,7 +266,7 @@ export function setupUI(swarm, recreateSwarmCallback) {
                 break;
             case ' ':
                 document.getElementById("clearBtn").click();
-                e.preventDefault(); // Evitar scroll
+                e.preventDefault();
                 break;
             case 't':
                 document.getElementById("textBtn").click();
@@ -218,40 +297,41 @@ export function setupUI(swarm, recreateSwarmCallback) {
                 break;
             case 'f5':
                 document.getElementById("resetScaleBtn").click();
-                e.preventDefault(); // Evitar recargar página
+                e.preventDefault();
                 break;
         }
     });
 
-    // --- Loop de actualización de stats ---
     setInterval(() => updateStats(swarm), 500);
 }
 
 function updateStats(swarm) {
     const stats = swarm.getStats();
     document.getElementById("droneCountValue").textContent = stats.total;
-    document.getElementById("formationCountValue").textContent = stats.formation || 0;
     
-    // Actualizar según el modo activo
     if (stats.mode === 'Orbital') {
+        document.getElementById("formationCountValue").textContent = stats.formation || 0;
         document.getElementById("orbitalCountValue").textContent = stats.orbiting || 0;
-        document.getElementById("orbitalCountValue").parentElement.style.display = 'flex';
+        document.getElementById("orbitalCountValue").previousElementSibling.textContent = 'Orbitales:';
     } else if (stats.mode === 'Eficiente') {
+        document.getElementById("formationCountValue").textContent = stats.formation || 0;
         document.getElementById("orbitalCountValue").textContent = stats.idle || 0;
         document.getElementById("orbitalCountValue").previousElementSibling.textContent = 'Inactivos:';
-        document.getElementById("orbitalCountValue").parentElement.style.display = 'flex';
-    } else if (stats.mode === 'Híbrido') {
-        document.getElementById("orbitalCountValue").textContent = stats.animating || 0;
-        document.getElementById("orbitalCountValue").previousElementSibling.textContent = 'Animando:';
-        document.getElementById("orbitalCountValue").parentElement.style.display = 'flex';
+    } else {
+        document.getElementById("formationCountValue").textContent = stats.formation || 0;
+        document.getElementById("orbitalCountValue").textContent = stats.orbiting || 0;
     }
     
-    if (params.currentFigure) {
-        document.getElementById("currentFigure").textContent = figureConfigs[params.currentFigure]?.name || params.currentFigure;
-        const color = figureConfigs[params.currentFigure]?.color || 0xffffff;
+    // CORREGIDO: Usar figura actual del swarm
+    const currentFigureName = swarm.currentFigureName || params.currentFigure;
+    if (currentFigureName) {
+        document.getElementById("currentFigure").textContent = figureConfigs[currentFigureName]?.name || currentFigureName;
+        const color = figureConfigs[currentFigureName]?.color || 0xffffff;
         document.getElementById("currentColor").style.backgroundColor = '#' + color.toString(16).padStart(6, '0');
     } else {
         document.getElementById("currentFigure").textContent = "Manual";
         document.getElementById("currentColor").style.backgroundColor = "white";
     }
+    
+    window.updateStats = updateStats;
 }

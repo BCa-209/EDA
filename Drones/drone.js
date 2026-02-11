@@ -11,10 +11,20 @@ export class Drone {
     this.mesh = new THREE.Mesh(g, m);
     this.mesh.position.set(x, y, 0);
     
+    this.mesh.userData = { isDrone: true }; // Marcar para limpieza eficiente
+    
     this.target = new THREE.Vector3(x, y, 0);
     this.velocity = new THREE.Vector3((Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, 0);
     
+    // Propiedades simplificadas (sin híbrido)
     this.isOrbiting = false;
+    this.isActive = false;          // Solo para modo eficiente
+    
+    // HomePosition solo para modo eficiente
+    if (Math.abs(y) > 200) { // Si está en la parte baja, probablemente modo eficiente
+      this.homePosition = new THREE.Vector3(x, y, 0);
+    }
+    
     this.originalColor = color;
     this.orbitColor = 0x00ffff;
     this.colorTransition = 0;
@@ -30,13 +40,13 @@ export class Drone {
     // 1. Colisiones
     if (params.collisionsEnabled) {
       this.resolveCollisions(neighbors);
-      if (this.isOrbiting) this.applyFlocking(neighbors);
+      if (this.isOrbiting && !this.isActive) this.applyFlocking(neighbors);
     }
     
     // 2. Movimiento
     this.moveToTarget();
     this.mesh.position.add(this.velocity);
-    this.velocity.multiplyScalar(0.5); // Fricción - rebote al modificar
+    this.velocity.multiplyScalar(0.5); // Fricción
     
     // 3. Visual (Color y Pulso)
     this.updateVisuals();
@@ -45,69 +55,65 @@ export class Drone {
     this.stayInBounds();
   }
   
-    resolveCollisions(neighbors) {
-        let push = new THREE.Vector3();
-        let count = 0;
-        
-        for (const n of neighbors) {
-        if (n === this) continue;
-        const diff = new THREE.Vector3().subVectors(this.mesh.position, n.mesh.position);
-        const dist = diff.length();
-        
-        if (dist < params.personalSpace && dist > 0) {
-            // SUAVIZAR LA FUERZA
-            const force = Math.pow((params.personalSpace - dist) / params.personalSpace, 2); // Elevar al cuadrado para suavizar
-            push.add(diff.normalize().multiplyScalar(force * params.separationForce * 0.5)); // Reducir factor
-            count++;
-        }
-        }
-        if (count > 0) {
-        push.divideScalar(count);
-        // LIMITAR LA VELOCIDAD MÁXIMA
-        const currentSpeed = this.velocity.length();
-        const maxPush = 0.3; // Límite de fuerza de empuje
-        if (push.length() > maxPush) {
-            push.normalize().multiplyScalar(maxPush);
-        }
-        this.velocity.add(push);
-        }
+  resolveCollisions(neighbors) {
+    let push = new THREE.Vector3();
+    let count = 0;
+    
+    for (const n of neighbors) {
+      if (n === this) continue;
+      const diff = new THREE.Vector3().subVectors(this.mesh.position, n.mesh.position);
+      const dist = diff.length();
+      
+      if (dist < params.personalSpace && dist > 0) {
+        const force = Math.pow((params.personalSpace - dist) / params.personalSpace, 2);
+        push.add(diff.normalize().multiplyScalar(force * params.separationForce * 0.5));
+        count++;
+      }
     }
+    if (count > 0) {
+      push.divideScalar(count);
+      const maxPush = 0.3;
+      if (push.length() > maxPush) {
+        push.normalize().multiplyScalar(maxPush);
+      }
+      this.velocity.add(push);
+    }
+  }
 
   applyFlocking(neighbors) {
     if (neighbors.length === 0) return;
-    // Implementación simplificada
+    
     let avgVel = new THREE.Vector3();
     let count = 0;
     neighbors.forEach(n => {
-        if(n.isOrbiting && n !== this) {
-            avgVel.add(n.velocity);
-            count++;
-        }
+      if(n.isOrbiting && n !== this) {
+        avgVel.add(n.velocity);
+        count++;
+      }
     });
     if(count > 0) {
-        avgVel.divideScalar(count);
-        this.velocity.add(avgVel.sub(this.velocity).multiplyScalar(this.alignmentFactor));
+      avgVel.divideScalar(count);
+      this.velocity.add(avgVel.sub(this.velocity).multiplyScalar(this.alignmentFactor));
     }
   }
   
-    moveToTarget() {
-        const diff = new THREE.Vector3().subVectors(this.target, this.mesh.position);
-        const dist = diff.length();
-        
-        if (dist > 0.5) {
-        // USAR params.droneSpeed DIRECTAMENTE
-        const speedFactor = params.droneSpeed * 0.5; // Ajusta este multiplicador
-        const steer = diff.normalize().multiplyScalar(Math.min(this.maxSpeed, dist * speedFactor));
-        this.velocity.add(steer);
-        }
+  moveToTarget() {
+    const diff = new THREE.Vector3().subVectors(this.target, this.mesh.position);
+    const dist = diff.length();
+    
+    if (dist > 0.5) {
+      const speedFactor = params.droneSpeed * 0.5;
+      const steer = diff.normalize().multiplyScalar(Math.min(this.maxSpeed, dist * speedFactor));
+      this.velocity.add(steer);
     }
+  }
 
   updateVisuals() {
     // Color
     this.colorTransition = this.isOrbiting ? 
-        Math.min(this.colorTransition + 0.05, 1) : 
-        Math.max(this.colorTransition - 0.05, 0);
-        
+      Math.min(this.colorTransition + 0.05, 1) : 
+      Math.max(this.colorTransition - 0.05, 0);
+      
     const c1 = new THREE.Color(this.originalColor);
     const c2 = new THREE.Color(this.orbitColor);
     this.mesh.material.color.copy(c1.lerp(c2, this.colorTransition));

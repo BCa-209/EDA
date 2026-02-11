@@ -518,3 +518,66 @@ input[type="range"]::-moz-range-thumb {
 
 
 
+/* Controles de modo de enjambre */
+.mode-controls button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 4px;
+    font-size: 12px;
+    height: auto;
+    min-height: 50px;
+    transition: all 0.2s ease;
+}
+
+.mode-controls button i {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.mode-controls button.active {
+    background: linear-gradient(135deg, #0077b6, #0096c7);
+    border-color: #00b4d8;
+    box-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+    transform: translateY(-1px);
+}
+
+.mode-controls button:not(.active):hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(0, 180, 216, 0.6);
+    transform: translateY(-1px);
+}
+
+/* Asegurar que el grid sea de 2 columnas */
+.button-group.mode-controls {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+
+
+/* Mensaje de carga */
+.loading-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 20, 40, 0.9);
+    color: #00b4d8;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(0, 180, 216, 0.3);
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.2);
+}
+
+.loading-message i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

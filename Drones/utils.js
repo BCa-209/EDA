@@ -4,7 +4,8 @@
 
 // Convierte lo dibujado en el canvas a puntos
 export function canvasToPoints(canvas) {
-    const ctx = canvas.getContext("2d");
+    // Agregar willReadFrequently para mejor rendimiento
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
     const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
     let activePixels = 0;
