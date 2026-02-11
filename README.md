@@ -24,7 +24,7 @@ Pensado para prácticas universitarias y refuerzo de conceptos fundamentales.
 - **Drones 2D**: 
     - Simulación de movimiento sincroniado
     - Almacenamiento en archivos `.txt` sin cifrado
-    - [Documentación]https://github.com/BCa-209/EDA/blob/main/Drones%202D/Drones2D.md)
+    - [Documentación](https://github.com/BCa-209/EDA/blob/main/Drones%202D/Drones2D.md)
 
 ## Estructura
 ```text
