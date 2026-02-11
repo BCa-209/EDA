@@ -3,7 +3,7 @@ Repositorio académico con implementaciones en **C++** de distintas **estructura
 Pensado para prácticas universitarias y refuerzo de conceptos fundamentales.
 
 
-## Temas incluidos
+## Temas Incluidos
 
 - **Test CPU**: Pruebas simples de rendimiento y uso de CPU.
     - Pruebas simples de rendimiento
@@ -39,7 +39,7 @@ EDA/
 └── .gitignore
 ```
 
-## Teconologias utilizdas
+## Tecnologías Utilizadas
 - Lenguajes: `C++`, `JavaScript`
 - Paradigma: **Programación Orientada a Objetos**
 - Entorno: **Consola** y **Navegador Web**
