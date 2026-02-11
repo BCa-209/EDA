@@ -85,55 +85,55 @@ void mostrarMenuPrincipal() {
     cout << opcion_normal();
     cout << "[2] Mostrar todos los contactos ";
     cout << marco_principal();
-    cout << "       |\n";
+    cout << "    |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[3] Buscar contacto por nombre ";
     cout << marco_principal();
-    cout << "        |\n";
+    cout << "     |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[4] Editar contacto por ID ";
     cout << marco_principal();
-    cout << "            |\n";
+    cout << "         |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[5] Eliminar contacto por ID ";
     cout << marco_principal();
-    cout << "          |\n";
+    cout << "       |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[6] Guardar agenda en archivo ";
     cout << marco_principal();
-    cout << "        |\n";
+    cout << "      |\n";
 
     cout << "|  ";
     cout << opcion_normal();
-    cout << "[7] Mostrar estadísticas ";
+    cout << "[7] Mostrar estadisticas ";
     cout << marco_principal();
-    cout << "            |\n";
+    cout << "           |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[8] Mostrar relaciones familiares ";
     cout << marco_principal();
-    cout << "     |\n";
+    cout << "  |\n";
 
     cout << "|  ";
     cout << opcion_normal();
     cout << "[9] Exportar a formato .VCF ";
     cout << marco_principal();
-    cout << "         |\n";
+    cout << "        |\n";
 
     cout << "|  ";
     cout << opcion_peligrosa();
     cout << "[0] Salir y guardar ";
     cout << marco_principal();
-    cout << "               |\n";
+    cout << "                |\n";
 
     cout << "|                                      |\n";
     cout << "+--------------------------------------+\n";
@@ -344,7 +344,7 @@ public:
         Nodo* actual = cabezaptr;
         
         if (actual == nullptr) {
-            mostrarMensaje("La agenda está vacía.", mensaje_prompt());
+            mostrarMensaje("La agenda esta vacia.", mensaje_prompt());
             return;
         }
         
@@ -535,7 +535,7 @@ public:
     void mostrarListaRapida() {
         Nodo* actual = listaContactos->getCabeza();
         if (actual == nullptr) {
-            mostrarMensaje("Agenda vacía - No hay contactos disponibles.", mensaje_prompt());
+            mostrarMensaje("Agenda vacia - No hay contactos disponibles.", mensaje_prompt());
             return;
         }
         
@@ -563,7 +563,7 @@ public:
                 mostrarEncabezado("EDITAR CONTACTO ID " + to_string(id));
                 
                 cout << marco_principal();
-                cout << "|  " << mensaje_prompt() << "Deja vacío para mantener valor actual";
+                cout << "|  " << mensaje_prompt() << "Deja vacio para mantener valor actual";
                 for (size_t i = 39; i < 36; i++) cout << " ";
                 cout << marco_principal() << " |\n";
                 cout << "|                                      |\n";
@@ -586,8 +586,8 @@ public:
                 getline(cin, input);
                 if (!input.empty()) actual->apellidoM = input;
 
-                cout << datos_contacto() << "Teléfonos actuales: " << actual->telefonos << RESET << endl;
-                cout << mensaje_prompt() << "Nuevos teléfonos: " << RESET;
+                cout << datos_contacto() << "Telefonos actuales: " << actual->telefonos << RESET << endl;
+                cout << mensaje_prompt() << "Nuevos telefonos: " << RESET;
                 getline(cin, input);
                 if (!input.empty()) actual->telefonos = input;
 
@@ -669,7 +669,7 @@ public:
         }
         
         limpiarPantalla();
-        mostrarEncabezado("RESULTADOS DE BÚSQUEDA");
+        mostrarEncabezado("RESULTADOS DE BuSQUEDA");
         
         cout << marco_principal();
         for (Nodo* nodo : resultados) {
@@ -707,7 +707,7 @@ public:
         int total = listaContactos->getCantidad();
         
         limpiarPantalla();
-        mostrarEncabezado("ESTADÍSTICAS DE LA AGENDA");
+        mostrarEncabezado("ESTADiSTICAS DE LA AGENDA");
         
         cout << marco_principal();
         cout << "|                                      |\n";
@@ -735,7 +735,7 @@ public:
         }
 
         limpiarPantalla();
-        mostrarEncabezado("ÁRBOL FAMILIAR DE: " + persona->nombres + " " + persona->apellidoP);
+        mostrarEncabezado("aRBOL FAMILIAR DE: " + persona->nombres + " " + persona->apellidoP);
         
         cout << marco_principal();
         cout << "|                                      |\n";
@@ -878,7 +878,7 @@ int main() {
                 cout << mensaje_prompt() << "Apellido Materno: " << RESET;
                 getline(cin, apM);
 
-                cout << mensaje_prompt() << "Teléfonos (separados por ;): " << RESET;
+                cout << mensaje_prompt() << "Telefonos (separados por ;): " << RESET;
                 getline(cin, tel);
 
                 cout << mensaje_prompt() << "Correo: " << RESET;
@@ -934,7 +934,7 @@ int main() {
                 if (!(cin >> id)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    mostrarMensaje("ID inválido.", mensaje_error());
+                    mostrarMensaje("ID invalido.", mensaje_error());
                     break;
                 }
                 cin.ignore();
@@ -949,7 +949,7 @@ int main() {
                 if (!(cin >> id)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    mostrarMensaje("ID inválido.", mensaje_error());
+                    mostrarMensaje("ID invalido.", mensaje_error());
                     break;
                 }
                 cin.ignore();
@@ -972,7 +972,7 @@ int main() {
                 if (!(cin >> id)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    mostrarMensaje("ID inválido.", mensaje_error());
+                    mostrarMensaje("ID invalido.", mensaje_error());
                     break;
                 }
                 cin.ignore();
@@ -998,7 +998,7 @@ int main() {
                 break;
 
             default:
-                mostrarMensaje("Opcion inválida. Intente nuevamente.", mensaje_error());
+                mostrarMensaje("Opcion invalida. Intente nuevamente.", mensaje_error());
                 break;
         }
 
