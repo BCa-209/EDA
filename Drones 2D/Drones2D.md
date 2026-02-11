@@ -1,4 +1,4 @@
-# Sistema de Simulación de Enjambre de Drones 2D
+# Sistema de Simulación de Enjambre de Drones 3D
 
 Un sistema interactivo de simulación de enjambres de drones que permite crear formaciones a partir de dibujos, texto y figuras predefinidas, con dos modos de operación y optimizaciones de rendimiento.
 
@@ -7,9 +7,9 @@ Un sistema interactivo de simulación de enjambres de drones que permite crear f
 ## Características Principales
 
 - **Múltiples modos de entrada:** Dibujo manual, texto y figuras vectoriales  
-- **Dos modos de operación:** Orbital (clásico) y Estatico (optimizado)  
+- **Dos modos de operación:** Orbital (clásico) y Eficiente (optimizado)  
 - **Procesamiento inteligente:** Algoritmos adaptativos para diferentes densidades  
-- **Simulación 2D en tiempo real:** Usando Three.js  
+- **Simulación 3D en tiempo real:** Usando Three.js  
 - **Interfaz intuitiva:** Panel de control completo con atajos de teclado  
 - **Optimizaciones de rendimiento:** Grid espacial, caché y gestión eficiente de memoria  
 
@@ -159,7 +159,7 @@ applyFlocking(neighbors):
 
 ## Nodos de Operacion
 
-### Nodo Orbital **Swarm.js**
+### Nodo Orbital Swarm.js
 
 #### Características
 - Todos los drones siempre activos  
@@ -450,19 +450,6 @@ init() {
 | 500 drones         | ~45 fps      | ~60 fps        | +33%   |
 | 1000 drones        | ~25 fps      | ~45 fps        | +80%   |
 | 2000 drones        | ~12 fps      | ~30 fps        | +150%  |
----
-
-### Consejos para Mejor Rendimiento
-
-- Usar **modo eficiente** para más de 800 drones  
-- Limitar los puntos de formación a ~1000 por figura  
-- Usar el método **`intelligent`** para figuras densas  
-- Reducir el radio de órbita cuando no sea necesario  
-- Desactivar colisiones en formaciones muy densas  
-
-## Licencia y Contribución
-
-Este proyecto está diseñado como base para simulaciones de enjambres de drones. Puede ser extendido y modificado para diferentes aplicaciones **educativas**, de **investigación** o **artísticas**.
 
 ---
 
@@ -477,13 +464,28 @@ Este proyecto está diseñado como base para simulaciones de enjambres de drones
 
 ---
 
-### Conclusión
+## Imagenes del Programa
+### Modos de Comportamiento
+![Drones orbitando.](/images/dron2d/mod1.png "")
+![Drones Estaticos.](/images/dron2d/mod2.png "")
 
-Este sistema proporciona una base sólida para simulaciones interactivas de enjambres de drones con múltiples características:
+### Dashboard
+![Drones orbitando.](/images/dron2d/dash_def.png "")
+![Drones Estaticos.](/images/dron2d/dash_def_2.png "")
 
-- **Flexibilidad:** Múltiples formas de definir formaciones  
-- **Rendimiento:** Optimizaciones para simulaciones grandes  
-- **Interactividad:** UI completa con controles en tiempo real  
-- **Extensibilidad:** Arquitectura modular fácil de extender  
+### Input Texto
+![Drones Orbitando.](/images/dron2d/textv1.png "")
+![Drones Estaticos.](/images/dron2d/textv2.png "")
 
-Ideal para demostraciones educativas, prototipos de algoritmos de control de enjambres, o visualizaciones artísticas de patrones colectivos.
+### Input Imagen predeterminada
+![Figura 1.](/images/dron2d/fig1.png "")
+![Figura 2.](/images/dron2d/fig2.png "")
+![Figura 3.](/images/dron2d/fig3.png "")
+
+### Input DIbujo
+![Dibujo manual.](/images/dron2d/paintv1.png "")
+
+### Controles y Atuajos
+![Controles.](/images/dron2d/control_fisicas.png "")
+![Uso de teclado para mayor facilidad de uso.](/images/dron2d/atajos.png "")
+

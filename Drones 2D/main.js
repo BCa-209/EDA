@@ -1,212 +1,195 @@
 /* =========================
-   ESCENA / CÁMARA / RENDER
+   MAIN (PUNTO DE ENTRADA)
 ========================= */
-const scene = new THREE.Scene();
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
+import { SwarmSystem } from './swarmModes.js';
+import { params } from './config.js';
+import { setupUI } from './ui.js';
 
-let width = window.innerWidth;
-let height = window.innerHeight;
+export function init() {
+    const scene = new THREE.Scene();
 
-const camera = new THREE.OrthographicCamera(
-  width / -2,
-  width / 2,
-  height / 2,
-  height / -2,
-  0.1,
-  1000
-);
-camera.position.z = 10;
+    const camera = new THREE.OrthographicCamera(
+        params.width / -2, params.width / 2,
+        params.height / 2, params.height / -2, 
+        0.1, 1000
+    );
+    camera.position.z = 10;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(width, height);
-renderer.setClearColor(0x000000);
-document.body.appendChild(renderer.domElement);
-
-/* =========================
-   PARÁMETROS GLOBALES
-========================= */
-let droneSpeed = 0.07;
-let droneCount = 800;
-let swarm;
-
-/* =========================
-   CANVAS INPUT
-========================= */
-const inputCanvas = document.getElementById("inputCanvas");
-const inputCtx = inputCanvas.getContext("2d");
-
-function clearInputCanvas() {
-  inputCtx.clearRect(0, 0, inputCanvas.width, inputCanvas.height);
-}
-
-/* =========================
-   TEXTO / CANVAS → PUNTOS
-========================= */
-function canvasToPoints() {
-  const img = inputCtx.getImageData(0, 0, inputCanvas.width, inputCanvas.height);
-  const points = [];
-  const step = 6;
-
-  for (let y = 0; y < img.height; y += step) {
-    for (let x = 0; x < img.width; x += step) {
-      const i = (y * img.width + x) * 4;
-      if (img.data[i + 3] > 128) {
-        points.push({
-          x: x - inputCanvas.width / 2,
-          y: inputCanvas.height / 2 - y
-        });
-      }
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(params.width, params.height);
+    renderer.setClearColor(0x000000);
+    
+    // Limpiar cualquier canvas anterior
+    const oldCanvas = document.querySelector('canvas:not(#inputCanvas)');
+    if (oldCanvas && oldCanvas !== renderer.domElement) {
+        oldCanvas.remove();
     }
-  }
-  return points;
-}
+    
+    document.body.appendChild(renderer.domElement);
 
-function textToPoints(text) {
-  clearInputCanvas();
-  inputCtx.fillStyle = "white";
-  inputCtx.font = "bold 120px Arial";
-  inputCtx.textAlign = "center";
-  inputCtx.textBaseline = "middle";
-  inputCtx.fillText(text, inputCanvas.width / 2, inputCanvas.height / 2);
-  return canvasToPoints();
-}
+    let swarm = new SwarmSystem(scene, params.droneCount);
 
-/* =========================
-   DIBUJO CON MOUSE
-========================= */
-let drawing = false;
-let lastX = 0;
-let lastY = 0;
-
-inputCanvas.addEventListener("mousedown", e => {
-  drawing = true;
-  const r = inputCanvas.getBoundingClientRect();
-  lastX = e.clientX - r.left;
-  lastY = e.clientY - r.top;
-});
-
-["mouseup", "mouseleave"].forEach(ev =>
-  inputCanvas.addEventListener(ev, () => drawing = false)
-);
-
-inputCanvas.addEventListener("mousemove", e => {
-  if (!drawing) return;
-  const r = inputCanvas.getBoundingClientRect();
-  const x = e.clientX - r.left;
-  const y = e.clientY - r.top;
-
-  inputCtx.strokeStyle = "white";
-  inputCtx.lineWidth = 6;
-  inputCtx.lineCap = "round";
-
-  inputCtx.beginPath();
-  inputCtx.moveTo(lastX, lastY);
-  inputCtx.lineTo(x, y);
-  inputCtx.stroke();
-
-  lastX = x;
-  lastY = y;
-});
-
-/* =========================
-   DRONE
-========================= */
-class Drone {
-  constructor(x, y) {
-    const g = new THREE.CircleGeometry(2, 10);
-    const m = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    this.mesh = new THREE.Mesh(g, m);
-    this.mesh.position.set(x, y, 0);
-    this.target = new THREE.Vector3(x, y, 0);
-  }
-
-  update() {
-    this.mesh.position.lerp(this.target, droneSpeed);
-  }
-}
-
-/* =========================
-   SWARM
-========================= */
-class Swarm {
-  constructor(count) {
-    this.drones = [];
-    for (let i = 0; i < count; i++) {
-      const x = Math.random() * width - width / 2;
-      const y = Math.random() * height - height / 2;
-      const d = new Drone(x, y);
-      this.drones.push(d);
-      scene.add(d.mesh);
-    }
-  }
-
-  dispose() {
-    this.drones.forEach(d => scene.remove(d.mesh));
-  }
-
-  setFormation(points) {
-    this.drones.forEach((d, i) => {
-      const p = points[i % points.length];
-      d.target.set(p.x, p.y, 0);
+const recreateSwarm = (newCount) => {
+    console.log(`=== RECREANDO ENJAMBRE ===`);
+    console.log(`Nuevo count: ${newCount}`);
+    console.log(`Modo actual: ${swarm ? swarm.mode : 'none'}`);
+    console.log(`Figura actual: ${swarm ? swarm.currentFigureName : 'none'}`);
+    
+    return new Promise((resolve) => {
+        // Guardar información crítica ANTES de desechar
+        const savedInfo = swarm ? {
+            mode: swarm.mode,
+            figureName: swarm.currentFigureName,
+            formationColor: swarm.formationColor,
+            currentPoints: swarm.currentPoints || []
+        } : null;
+        
+        // Limpiar swarm actual
+        if (swarm) {
+            console.log("Descartando swarm anterior...");
+            swarm.dispose();
+            swarm = null;
+        }
+        
+        // Crear nuevo swarm
+        swarm = new SwarmSystem(scene, newCount);
+        console.log("Nuevo swarm creado");
+        
+        // Restaurar modo si había uno
+        if (savedInfo && savedInfo.mode) {
+            console.log("Restaurando modo:", savedInfo.mode);
+            swarm.setMode(savedInfo.mode);
+        }
+        
+        // Esperar a que el swarm esté completamente inicializado
+        setTimeout(() => {
+            console.log("Swarm listo, activeMode:", swarm.activeMode ? "Sí" : "No");
+            console.log("Swarm listo, figuraName actual:", swarm.currentFigureName);
+            
+            // Re-inicializar controles UI
+            reinitializeUIControls(swarm);
+            
+            // Resolver la promesa con la información guardada
+            resolve(savedInfo);
+        }, 100);
     });
-  }
+};
 
-  update() {
-    this.drones.forEach(d => d.update());
-  }
+    setupUI(swarm, recreateSwarm);
+    addModeControls(swarm);
+
+    window.addEventListener("resize", () => {
+        params.width = window.innerWidth;
+        params.height = window.innerHeight;
+        
+        camera.left = params.width / -2;
+        camera.right = params.width / 2;
+        camera.top = params.height / 2;
+        camera.bottom = params.height / -2;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize(params.width, params.height);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        if (swarm) swarm.update();
+        
+        renderer.render(scene, camera);
+    }
+
+    animate();
 }
 
-/* =========================
-   UI CONTROLS
-========================= */
-document.getElementById("textBtn").onclick = () => {
-  const t = document.getElementById("textInput").value;
-  if (t) swarm.setFormation(textToPoints(t));
-};
+function addModeControls(swarm) {
+    // Verificar si ya existe la sección
+    if (document.querySelector('.mode-controls')) {
+        return;
+    }
+    
+    const modeSection = document.createElement('div');
+    modeSection.className = 'section';
+    modeSection.innerHTML = `
+        <h3><i class="fas fa-sync-alt"></i> Modo de Enjambre</h3>
+        <div class="button-group mode-controls" style="grid-template-columns: repeat(2, 1fr);">
+            <button id="orbitalModeBtn" class="btn-secondary active" data-mode="orbital">
+                <i class="fas fa-circle-notch"></i> Orbital
+            </button>
+            <button id="efficientModeBtn" class="btn-secondary" data-mode="efficient">
+                <i class="fas fa-battery-full"></i> Eficiente
+            </button>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #888;">
+            <i class="fas fa-info-circle"></i> 
+            <span id="modeDescription">Drones no usados orbitan alrededor</span>
+        </div>
+    `;
 
-document.getElementById("drawBtn").onclick = () => {
-  const p = canvasToPoints();
-  if (p.length) swarm.setFormation(p);
-};
+    const figureSection = document.querySelector('.section:nth-child(1)');
+    if (figureSection) {
+        figureSection.parentNode.insertBefore(modeSection, figureSection.nextSibling);
+    } else {
+        document.querySelector('.panel-content').prepend(modeSection);
+    }
 
-document.getElementById("clearBtn").onclick = clearInputCanvas;
-
-document.getElementById("speedRange").oninput = e => {
-  droneSpeed = parseFloat(e.target.value);
-};
-
-document.getElementById("applyDrones").onclick = () => {
-  droneCount = parseInt(document.getElementById("droneCount").value);
-  swarm.dispose();
-  swarm = new Swarm(droneCount);
-};
-
-/* =========================
-   INIT
-========================= */
-swarm = new Swarm(droneCount);
-
-/* =========================
-   LOOP
-========================= */
-function animate() {
-  requestAnimationFrame(animate);
-  swarm.update();
-  renderer.render(scene, camera);
+    // Configurar event listeners
+    setupModeButtons(swarm);
 }
-animate();
 
-/* =========================
-   RESIZE
-========================= */
-window.addEventListener("resize", () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
+function setupModeButtons(swarm) {
+    const orbitalBtn = document.getElementById('orbitalModeBtn');
+    const efficientBtn = document.getElementById('efficientModeBtn');
+    
+    if (orbitalBtn) {
+        orbitalBtn.onclick = () => {
+            console.log('Cambiando a modo orbital...');
+            swarm.setMode('orbital');
+            updateModeButtons('orbital');
+        };
+    }
+    
+    if (efficientBtn) {
+        efficientBtn.onclick = () => {
+            console.log('Cambiando a modo eficiente...');
+            swarm.setMode('efficient');
+            updateModeButtons('efficient');
+        };
+    }
+}
 
-  camera.left = width / -2;
-  camera.right = width / 2;
-  camera.top = height / 2;
-  camera.bottom = height / -2;
-  camera.updateProjectionMatrix();
+function updateModeButtons(activeMode) {
+    document.querySelectorAll('.mode-controls button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    const activeBtn = document.getElementById(`${activeMode}ModeBtn`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+    
+    const descriptions = {
+        orbital: 'Drones no usados orbitan alrededor',
+        efficient: 'Drones no usados se quedan ordenados abajo'
+    };
+    
+    const descriptionEl = document.getElementById('modeDescription');
+    if (descriptionEl) {
+        descriptionEl.textContent = descriptions[activeMode] || '';
+    }
+}
 
-  renderer.setSize(width, height);
-});
+// Función para reinicializar controles UI después de recrear swarm
+function reinitializeUIControls(swarm) {
+    console.log("Reinicializando controles UI...");
+    
+    // Reconfigurar botones de modo
+    setupModeButtons(swarm);
+    
+    // Actualizar estadísticas inmediatamente
+    if (typeof window.updateStats === 'function') {
+        console.log("Llamando a updateStats...");
+        window.updateStats(swarm);
+    }
+}
