@@ -466,23 +466,36 @@ init() {
 
 ## Imagenes del Programa
 ### Modos de Comportamiento
+Seleccion de modo de Comportamiento de los Drones
+
 ![Drones orbitando.](/images/dron2d/mod1.png "")
 ![Drones Estaticos.](/images/dron2d/mod2.png "")
 
 ### Dashboard
+Dashboard con Drones orbitando
+
 ![Drones orbitando.](/images/dron2d/dash_def.png "")
+
+Dashboard con Drones Estaticos
+
 ![Drones Estaticos.](/images/dron2d/dash_def_2.png "")
 
 ### Input Texto
+Visualizacion de Texto segun los drones que sean necesarios para la visualizacion
+
 ![Drones Orbitando.](/images/dron2d/textv1.png "")
 ![Drones Estaticos.](/images/dron2d/textv2.png "")
 
 ### Input Imagen predeterminada
+Seleccion de Imagenes Predeterminadas del programa
+
 ![Figura 1.](/images/dron2d/fig1.png "")
 ![Figura 2.](/images/dron2d/fig2.png "")
 ![Figura 3.](/images/dron2d/fig3.png "")
 
 ### Input DIbujo
+Introducir dibujos manuales a travez del canvas
+
 ![Dibujo manual.](/images/dron2d/paintv1.png "")
 
 ### Controles y Atuajos
