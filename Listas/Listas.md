@@ -1,13 +1,13 @@
 # Implementación de Listas Enlazadas en C++
 
-## 📋 Descripción General
+## Descripción General
 
 Este repositorio contiene tres implementaciones de listas enlazadas en C++:
 1. **Lista simplemente enlazada**
 2. **Lista doblemente enlazada**
 3. **Lista doblemente enlazada con implementación de Pila y Cola**
 
-## 📁 Estructura de Archivos
+## Estructura de Archivos
 ```
 Listas/
 ├── listas_enlazada.cpp # Lista simplemente enlazada
@@ -16,9 +16,9 @@ Listas/
 ```
 ---
 
-# 1️⃣ LISTA SIMPLEMENTE ENLAZADA (`listas_enlazada.cpp`)
+# LISTA SIMPLEMENTE ENLAZADA (`listas_enlazada.cpp`)
 
-## 🧱 Estructura de Clases
+## Estructura de Clases
 
 ### `class Nodo`
 ```cpp
@@ -56,9 +56,9 @@ class Lista {
 - No tiene puntero al último nodo
 
 
-# 1️⃣ LISTA DOBLEMENTE ENLAZADA (`listas_doble_enlazada.cpp`)
+# LISTA DOBLEMENTE ENLAZADA (`listas_doble_enlazada.cpp`)
 
-## 🧱 Estructura de Clases
+## Estructura de Clases
 
 ### `class Nodo`
 ```cpp
@@ -99,9 +99,9 @@ class Lista {
 - Recorrido O(n) para llegar al final
 
 
-# 1️⃣ LISTA DOBLE + PILA/COLA (`listas_doble_enlazada_pila.cpp`)
+# LISTA DOBLE + PILA/COLA (`listas_doble_enlazada_pila.cpp`)
 
-## 🧱 Estructura de Clases Adicionales  
+## Estructura de Clases Adicionales  
 
 ### `class Pila`(LIFO)
 ```cpp
