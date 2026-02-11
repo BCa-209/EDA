@@ -8,19 +8,23 @@ Pensado para prácticas universitarias y refuerzo de conceptos fundamentales.
 - **Test CPU**: Pruebas simples de rendimiento y uso de CPU.
     - Pruebas simples de rendimiento
     - Comparación de algoritmos de ordenamiento
+    - [Documentación](https://github.com/BCa-209/EDA/blob/main/test%20cpu/TestCPU.md)
 - **Pilas y colas**: Ejemplos de uso de pilas y colas.
     - Implementaciones usando Programación Orientada a Objetos (POO)
+    - [Documentación](https://github.com/BCa-209/EDA/blob/main/pilas%20y%20colas/PyC.md)
 - **Listas**: Implementaciones básicas de listas enlazadas.
     - Listas simplemente enlazadas
     - Ejemplos básicos de operaciones (insertar, eliminar, recorrer)
     - Ejemplos prácticos de uso
+    - [Documentación](https://github.com/BCa-209/EDA/blob/main/Listas/Listas.md)
 - **Agenda**: 
     - Implementación de una agenda de contactos guardodos en archivos `.txt`
     - Almacenamiento en archivos `.txt` sin cifrado
+    - [Documentación](https://github.com/BCa-209/EDA/blob/main/Agenda/Agenda.md)
 - **Drones 2D**: 
     - Simulación de movimiento sincroniado
     - Almacenamiento en archivos `.txt` sin cifrado
-
+    - [Documentación]https://github.com/BCa-209/EDA/blob/main/Drones%202D/Drones2D.md)
 
 ## Estructura
 ```text
