@@ -63,13 +63,21 @@ int main() {
     Cola cola;
 
     cola.encolar(5);
+    cola.imprimir();
     cola.encolar(10);
+    cola.imprimir();
     cola.encolar(15);
+    cola.imprimir();
+    cola.encolar(20);
+    cola.imprimir();
+    cola.encolar(25);
+    cola.imprimir();
+    cola.encolar(30);
 
     cout << "Elementos en la cola: ";
     cola.imprimir();
 
-    cout << "-Desencolar" << endl;
+    cout << "-Desencolar..." << endl;
     cola.desencolar();
     cout << "Elementos despues de desencolar: ";
     cola.imprimir();

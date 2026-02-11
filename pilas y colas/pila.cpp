@@ -58,15 +58,21 @@ public:
 int main() {
     Pila pila;
 
+    cout << "Agregndo datos a la Pila...\n";
     pila.push(5);
+    pila.imprimir();
     pila.push(10);
+    pila.imprimir();
     pila.push(15);
-
-    cout << "Elementos en la pila: ";
+    pila.imprimir();
+    pila.push(20);
+    pila.imprimir();
+    
+    cout << "\n---Elementos en la pila: ";
     pila.imprimir();
 
     pila.pop();
-    cout << "Elementos en la pila despues de un pop: ";
+    cout << "\n---Elementos en la pila despues de un pop: ";
     pila.imprimir();
 
     return 0;
