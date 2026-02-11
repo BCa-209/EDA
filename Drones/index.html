@@ -216,7 +216,13 @@
   <!-- Canvas de dibujo -->
   <canvas id="inputCanvas" width="400" height="150"></canvas>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  <script src="main2.js"></script>
+  <!-- Script principal como módulo -->
+  <script type="module">
+    // Importa la función init desde main.js
+    import { init } from './main.js';
+    
+    // Inicializa la aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
