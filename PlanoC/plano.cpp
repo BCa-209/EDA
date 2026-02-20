@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 #include <vector>
+#include <limits>
 using namespace std;
 
 class Plano {
@@ -10,6 +11,7 @@ private:
     int maxY;  // Vertical
 
     struct Punto {
+        char nombre; // 
         int x;
         int y;
     };
@@ -23,22 +25,55 @@ public:
         maxY = y;
     }
 
-    void agregarPunto(int x, int y) {
+    void agregarPunto(char nombre, int x, int y) {
 
+        // Validar rango
         if(x < 0 || x > maxX || y < 0 || y > maxY) {
-            cout << "Punto (" << x << "," << y << ") fuera de rango\n";
+            cout << "Error: Punto (" << x << "," << y 
+                << ") fuera del rango permitido [0," 
+                << maxX << "] x [0," << maxY << "]\n";
             return;
         }
 
-        puntos.push_back({x, y});
+        // Validar nombre repetido
+        for(const auto& p : puntos) {
+            if(p.nombre == nombre) {
+                cout << "Ya existe un punto con nombre " << nombre << endl;
+                return;
+            }
+        }
+
+        for(const auto& p : puntos) {
+            if(p.x == x && p.y == y) {
+                cout << "Ya existe un punto en esa posicion\n";
+                return;
+            }
+        }
+
+        puntos.push_back({nombre, x, y});
+    }
+
+    void distanciaEntrePuntos(char n1, char n2) {
+        Punto* p1 = nullptr;
+        Punto* p2 = nullptr;
+        for(auto& p : puntos) {
+            if(p.nombre == n1) p1 = &p;
+            if(p.nombre == n2) p2 = &p;
+        }
+        if(!p1 || !p2) {
+            cout << "\n=== Uno o ambos puntos no existen ===\n";
+            return;
+        }
+        double dx = p1->x - p2->x;
+        double dy = p1->y - p2->y;
+        double distancia = sqrt(dx*dx + dy*dy);
+        cout << "\n=== Distancia entre " << n1 << " y " << n2 
+            << " es: " << distancia << " === \n";
     }
 
     void draw() {
-
         for(int y = maxY; y >= 0; y--) {
-
             for(int x = 0; x <= maxX; x++) {
-
                 if(y == 0 && x == 0) {
                     cout << "   +";
                 }
@@ -49,23 +84,16 @@ public:
                     cout << setw(2) << y << " |";
                 }
                 else {
-
-                    bool hayPunto = false;
-
+                    char simbolo = '.';
                     for(const auto& p : puntos) {
                         if(p.x == x && p.y == y) {
-                            hayPunto = true;
+                            simbolo = p.nombre;
                             break;
                         }
                     }
-
-                    if(hayPunto)
-                        cout << " X";
-                    else
-                        cout << " .";
+                    cout << " " << simbolo;
                 }
             }
-
             cout << endl;
         }
 
@@ -102,7 +130,17 @@ public:
             << minDist << endl;
     }
 
+bool vacio() const {
+    return puntos.empty();
+}
 
+void mostrarPuntos() const {
+    cout << "Puntos disponibles:\n";
+    for(const auto& p : puntos) {
+        cout << " - " << p.nombre 
+             << " (" << p.x << "," << p.y << ")\n";
+    }
+}
 };
 
 void clean() {
@@ -116,7 +154,13 @@ void clean() {
 int main() {
     Plano plano;
     int opcion;
-
+    plano.limites(20, 10);
+    plano.agregarPunto('A', 2, 3); 
+    plano.agregarPunto('B', 15, 7); 
+    plano.agregarPunto('C', 10, 5); 
+    plano.agregarPunto('D', 1, 9);
+    plano.agregarPunto('E', 5, 5);
+    plano.agregarPunto('F', 5, 5);
     do {
         clean();
         cout << "==== MENU PLANO CARTESIANO ====\n";
@@ -124,7 +168,8 @@ int main() {
         cout << "2. Agregar punto\n";
         cout << "3. Mostrar plano\n";
         cout << "4. Punto mas cercano\n";
-        cout << "5. Salir\n";
+        cout << "5. Distancia entre dos puntos\n";
+        cout << "6. Salir\n";
         cout << "Seleccione opcion: ";
         cin >> opcion;
 
@@ -139,12 +184,15 @@ int main() {
                 break;
             }
             case 2: {
+                char nom;
                 int px, py;
+                cout << "Ingrese nombre del punto: ";
+                cin >> nom;
                 cout << "Ingrese coordenada X del punto: ";
                 cin >> px;
                 cout << "Ingrese coordenada Y del punto: ";
                 cin >> py;
-                plano.agregarPunto(px, py);
+                plano.agregarPunto(nom, px, py);
                 plano.draw();
                 cout << "Punto agregado. Presione enter para continuar...";
                 cin.ignore();
@@ -165,12 +213,34 @@ int main() {
                 cout << "Ingrese coordenada Y de referencia: ";
                 cin >> py;
                 plano.pntCercano(px, py);
+                plano.draw();
                 cout << "Presione enter para continuar...";
                 cin.ignore();
                 cin.get();
                 break;
             }
-            case 5:
+            case 5: {
+                if(plano.vacio()) {
+                    cout << "No hay puntos registrados.\n";
+                    break;
+                }
+
+                plano.mostrarPuntos();
+
+                char a, b;
+                cout << "\nIngrese nombre del primer punto: ";
+                cin >> a;
+                cout << "Ingrese nombre del segundo punto: ";
+                cin >> b;
+
+                plano.distanciaEntrePuntos(a, b);
+
+                cout << "Presione enter para continuar...";
+                cin.ignore();
+                cin.get();
+                break;
+            }
+            case 6:
                 cout << "Saliendo...\n";
                 break;
             default:
@@ -180,12 +250,15 @@ int main() {
                 break;
         }
 
-    } while(opcion != 5);
+    } while(opcion != 6);
 
     return 0;
 }
 
 // TODO KNN- vecinos mas cercanos
+// TODO: nombres a puntos
+// TODO: distancia entre puntos
+// TODO: 
 
 
 /*
