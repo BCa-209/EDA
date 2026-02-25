@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <algorithm>
 #include <vector>
 #include <limits>
 using namespace std;
@@ -70,6 +71,45 @@ public:
         cout << "\n=== Distancia entre " << n1 << " y " << n2 
             << " es: " << distancia << " === \n";
     }
+
+    void vecinosOrdenados(int x, int y) {
+
+        if(puntos.empty()) {
+            cout << "No hay puntos en el plano\n";
+            return;
+        }
+
+        // Vector auxiliar: (distancia, Punto)
+        vector<pair<double, Punto>> distancias;
+
+        for(const auto& p : puntos) {
+            double dist = sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
+            distancias.push_back({dist, p});
+        }
+
+        // Ordenar por distancia (ascendente)
+        sort(distancias.begin(), distancias.end(),
+            [](const pair<double, Punto>& a,
+                const pair<double, Punto>& b) {
+                    return a.first < b.first;
+            });
+
+        cout << "\nPuntos ordenados por cercania a ("
+            << x << "," << y << "):\n";
+
+        for(const auto& d : distancias) {
+            cout << d.second.nombre
+                << " (" << d.second.x
+                << "," << d.second.y
+                << ") -> Distancia: "
+                << d.first << endl;
+        }
+    }
+
+    // TODO: input(x,y,Nombre;Grupo)
+    // hallar disancia promedio entre los puntos al nuevo y elegir el grupo mas cercano al nuevo punto para asignarlo a ese grupo
+    // mostrar los grupos por coloresx
+    // ejemplo imc( indice de masa corporal) -> bajo peso, normal, sobrepeso, obesidad
 
     void draw() {
         for(int y = maxY; y >= 0; y--) {
