@@ -50,8 +50,8 @@ public:
         cout << "\nPuntos disponibles:\n";
         for(const auto& p : puntos) {
             cout << " - " << p.nombre 
-                 << " (" << p.x << "," << p.y 
-                 << ") Grupo: " << p.grupo << "\n";
+                << " (" << p.x << "," << p.y 
+                << ") Grupo: " << p.grupo << "\n";
         }
     }
 
@@ -76,7 +76,6 @@ public:
         puntos.push_back({nombre, x, y, grupo});
     }
 
-    // 🔥 Asignar grupo automáticamente
     int grupoMasCercano(int x, int y) {
 
         if(puntos.empty())
@@ -127,7 +126,7 @@ public:
         double dy = p1->y - p2->y;
 
         cout << "Distancia: " 
-             << sqrt(dx*dx + dy*dy) << endl;
+            << sqrt(dx*dx + dy*dy) << endl;
     }
 
     void vecinosOrdenados(int x, int y) {
@@ -146,7 +145,7 @@ public:
 
         sort(distancias.begin(), distancias.end(),
             [](const pair<double, Punto>& a,
-               const pair<double, Punto>& b) {
+            const pair<double, Punto>& b) {
                 return a.first < b.first;
         });
 
@@ -154,9 +153,9 @@ public:
 
         for(const auto& d : distancias) {
             cout << d.second.nombre
-                 << " (" << d.second.x
-                 << "," << d.second.y
-                 << ") -> " << d.first << endl;
+                << " (" << d.second.x
+                << "," << d.second.y
+                << ") -> " << d.first << endl;
         }
     }
 
@@ -169,11 +168,11 @@ public:
 
         Punto masCercano = puntos[0];
         double minDist = sqrt(pow(masCercano.x - x, 2) +
-                              pow(masCercano.y - y, 2));
+                            pow(masCercano.y - y, 2));
 
         for(const auto& p : puntos) {
             double dist = sqrt(pow(p.x - x, 2) +
-                               pow(p.y - y, 2));
+                            pow(p.y - y, 2));
 
             if(dist < minDist) {
                 minDist = dist;
@@ -182,8 +181,8 @@ public:
         }
 
         cout << "Mas cercano: "
-             << masCercano.nombre
-             << " Distancia: " << minDist << endl;
+            << masCercano.nombre
+            << " Distancia: " << minDist << endl;
     }
 
     void draw() {
@@ -212,8 +211,8 @@ public:
 
                     if(simbolo != '.')
                         cout << color(grupo)
-                             << " " << simbolo
-                             << "\033[0m";
+                            << " " << simbolo
+                            << "\033[0m";
                     else
                         cout << " .";
                 }
@@ -234,12 +233,15 @@ public:
     int knn(int x, int y, int K) {
 
         if(puntos.empty()) {
-            cout << "No hay puntos en el plano\n";
+            cout << "No hay puntos en el plano.\n";
             return -1;
         }
-
+        // Si K es -1 o mayor que la cantidad de puntos = usar todos
+        if(K == -1 || K > puntos.size()) {
+            K = puntos.size();
+        }
         if(K <= 0) {
-            cout << "K debe ser mayor que 0\n";
+            cout << "K debe ser mayor que 0 o -1 para usar todos.\n";
             return -1;
         }
 
@@ -263,7 +265,7 @@ public:
 
         map<int,int> conteo;
 
-        // Tomar los K vecinos más cercanos
+        // Tomar los K vecinos mas cercanos
         for(int i = 0; i < K && i < distancias.size(); i++) {
             conteo[distancias[i].second]++;
         }
@@ -295,27 +297,38 @@ int main() {
     plano.agregarPunto('B', 1, 5, 1);
     plano.agregarPunto('C', 5, 5, 1);
     plano.agregarPunto('D', 3, 3, 1);
+    cout << "Grupo 1: A, B, C, D\n";
     plano.agregarPunto('W', 20, 10, 2);
-    plano.agregarPunto('Y', 18, 5, 2);
-    plano.agregarPunto('X', 15, 8, 2);
+    plano.agregarPunto('X', 18, 5, 2);
+    plano.agregarPunto('Y', 15, 8, 2);
     plano.agregarPunto('Z', 19, 7, 2);
+    cout << "Grupo 2: W, X, Y, Z\n";
 
-    // Nuevo punto automático
+    // Nuevo punto automatico
     int x = 8;
     int y = 4;
     int grupo1 = plano.grupoMasCercano(x, y);
     
-    cout << "Grupo asignado automaticamente: " << grupo1 << endl;
     plano.agregarPunto('F', x, y, grupo1);
+    cout << "Punto " << "F" << ". Grupo asignado automaticamente: " << grupo1 << endl;
     
+    // Nuevo punto con knn
     int x2 = 15;
     int y2 = 5;
     int K = 7;
     int grupo2 = plano.knn(x2, y2, K);
     if(grupo2 != -1) {
-        cout << "Grupo asignado por KNN: " << grupo2 << endl;
-        plano.agregarPunto('1', x2, y2, grupo2);
+        plano.agregarPunto('M', x2, y2, grupo2);
+        cout << "Punto " << "M" << ". Grupo asignado por KNN: " << grupo2 << endl;
     }
+    
+    //PuntoF. Grupo asignado automaticamente: 1
+    //PuntoM. Grupo asignado por KNN: 2
+    
+    plano.agregarPunto('N', 10, 2, 3);
+    plano.agregarPunto('O', 12, 1, 3);
+    plano.agregarPunto('P', 11, 3, 3);
+    plano.agregarPunto('Q', 13, 2, 3);
 
     plano.draw();
 
