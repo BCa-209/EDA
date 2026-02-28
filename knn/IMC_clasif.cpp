@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <limits>
+#include <cstdlib>
 
 using namespace std;
 
@@ -54,27 +55,25 @@ public:
                 << ") Grupo: " << m.grupo << "\n";
         }
     }
+void agregarPunto(char nombre, int m, int n, int grupo) {
+    int x = m/10;
+    int y = n/10;
+    if (x < 0 || x > maxX || y < 0 || y > maxY) {
+        cout << "Error: Muestra fuera de rango\n";
+        return;
+    }
 
-    void agregarPunto(char nombre, int x, int y, int grupo) {
-
-        if(x < 0 || x > maxX || y < 0 || y > maxY) {
-            cout << "Error: Muestra fuera de rango\n";
+    // Verificar que el nombre no se repita
+    for (const auto& m : muestras) {
+        if (m.nombre == nombre) {
+            cout << "Ya existe una muestra con ese nombre\n";
             return;
         }
-
-        for(const auto& m : muestras) {
-            if(m.nombre == nombre) {
-                cout << "Ya existe una muestra con ese nombre\n";
-                return;
-            }
-            if(m.x == x && m.y == y) {
-                cout << "Ya existe una muestra en esa posicion\n";
-                return;
-            }
-        }
-
-        muestras.push_back({nombre, x, y, grupo});
     }
+
+    // Ahora se permite agregar varios puntos en la misma posicion
+    muestras.push_back({nombre, x, y, grupo});
+}
 
     int grupoMasCercano(int x, int y) {
 
@@ -187,47 +186,79 @@ public:
 
     void draw() {
 
-        for(int y = maxY; y >= 0; y--) {
-            for(int x = 0; x <= maxX; x++) {
+        // Mapa de posiciones (x, y) con la cantidad de puntos
+        map<pair<int, int>, int> contadorPosiciones;
 
-                if(y == 0 && x == 0)
-                    cout << "   +";
-                else if(y == 0)
-                    cout << "--";
-                else if(x == 0)
-                    cout << setw(2) << y << " |";
+        // Contar cuantos puntos hay en cada posicion
+        for (const auto& m : muestras) {
+            contadorPosiciones[{m.x, m.y}]++;
+        }
+
+        // Dibuja el plano
+        for (int y = maxY; y >= 0; y--) {
+            for (int x = 0; x <= maxX; x++) {
+
+                if (y == 0 && x == 0)
+                    cout << "   +";  // Marca el origen
+                else if (y == 0)
+                    cout << "--";  // Marca la linea X
+                else if (x == 0)
+                    cout << setw(2) << y << " |";  // Marca la linea Y
                 else {
 
-                    char simbolo = '.';
+                    char simbolo = '.';  // Por defecto, un espacio vacio
                     int grupo = 0;
+                    int conteo = 0;  // Para contar cuantos puntos hay en esta posicion
 
-                    for(const auto& m : muestras) {
-                        if(m.x == x && m.y == y) {
-                            simbolo = m.nombre;
-                            grupo = m.grupo;
-                            break;
+                    for (const auto& m : muestras) {
+                        if (m.x == x && m.y == y) {
+                            simbolo = m.nombre;  // Usamos el nombre del punto
+                            grupo = m.grupo;  // Guardamos el grupo
+                            conteo++;  // Contamos los puntos en la misma posicion
                         }
                     }
 
-                    if(simbolo != '.')
-                        cout << color(grupo)
-                            << " " << simbolo
-                            << "\033[0m";
-                    else
-                        cout << " .";
+                    // Si hay mas de un punto en la misma posicion
+                    if (conteo > 1) {
+                        cout << color(grupo) << " *" << conteo << "\033[0m";  // Mostrar un asterisco con el conteo
+                    } else if (simbolo != '.') {
+                        cout << color(grupo) << " " << simbolo << "\033[0m";  // Mostrar el punto con el color
+                    } else {
+                        cout << " .";  // Espacio vacio
+                    }
                 }
             }
             cout << endl;
         }
 
+        // Imprimir los numeros del eje X
         cout << "    ";
-        for(int x = 1; x <= maxX; x++) {
-            if(x % 2 == 0)
+        for (int x = 1; x <= maxX; x++) {
+            if (x % 2 == 0)
                 cout << setw(2) << x;
             else
                 cout << "  ";
         }
         cout << endl;
+    }
+
+    void listarPuntosPorPosicion() {
+        // Mapa para contar puntos en cada posicion (x, y)
+        map<pair<int, int>, vector<Muestra>> puntosPorPosicion;
+
+        // Agrupar puntos por sus coordenadas (x, y)
+        for (const auto& m : muestras) {
+            puntosPorPosicion[{m.x, m.y}].push_back(m);
+        }
+
+        // Mostrar los puntos agrupados por posicion
+        cout << "Puntos agrupados por posicion:\n";
+        for (const auto& entry : puntosPorPosicion) {
+            cout << "Posicion (" << entry.first.first << ", " << entry.first.second << "):\n";
+            for (const auto& p : entry.second) {
+                cout << "  - " << p.nombre << " (Grupo: " << p.grupo << ")\n";
+            }
+        }
     }
 
     int knn(int x, int y, int K) {
@@ -286,6 +317,119 @@ public:
 
 };
 
+void clean() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+int main() {
+    clean();
+    Clasificador plano;
+    plano.limites(30, 20);  // Establecer limites del plano 2D
+    
+    bool continuar = true;
+    while (continuar) {
+        cout << "====================================\n";
+        cout << "|| Calcular IMC por clasificacion ||\n";
+        cout << "====================================\n";
+        cout << "\n----- Menu de Opciones -----\n";
+        cout << "1. Agregar una muestra\n";
+        cout << "   (Ingresa una muestra con altura, peso y grupo)\n";
+        cout << "2. Mostrar grafico 2D de las muestras\n";
+        cout << "3. Listar muestras agrupadas por posicion\n";
+        cout << "4. Asignar grupo automaticamente a una muestra\n";
+        cout << "   (Basado en la distancia promedio al grupo mas cercano)\n";
+        cout << "5. Asignar grupo a una muestra por KNN\n";
+        cout << "   (Usa el algoritmo KNN con los K puntos mas cercanos)\n";
+        cout << "6. Salir del programa\n";
+        cout << "Elige una opcion (1-6): ";
+        
+        int opcion;
+        cin >> opcion;
+
+        switch(opcion) {
+            case 1: {
+                clean();
+                char nombre;
+                int x, y, grupo;
+                cout << "--- Agregar una muestra ---\n";
+                cout << "Introduce el nombre del punto: ";
+                cin >> nombre;
+                cout << "Introduce la altura (cm.): ";
+                cin >> x;
+                cout << "Introduce el peso (kg.): ";
+                cin >> y;
+                cout << "Introduce el grupo:\n";
+                cout << "-> 1. Bajo peso (IMC < 18.5)\n";
+                cout << "-> 2. Normal (18.5 <= IMC < 24.9)\n";
+                cout << "-> 3. Sobrepeso (25 <= IMC < 29.9)\n";
+                cout << "-> 4. Obesidad (IMC >= 30)\n";
+                cin >> grupo;
+                plano.agregarPunto(nombre, x, y, grupo);
+                break;
+            }
+            case 2:
+                clean();
+                cout << "--- Dibujar plano ---\n";
+                plano.draw();  // Dibuja el plano
+                break;
+            case 3:
+                clean();
+                cout << "--- Listar puntos por posicion ---\n";
+                plano.listarPuntosPorPosicion();  // Listar puntos por posicion
+                break;
+            case 4: {
+                clean();
+                int x, y;
+                cout << "--- Asignar grupo automaticamente ---\n";
+                cout << "Introduce las coordenadas (x, y) para asignar un grupo automaticamente: ";
+                cin >> x >> y;
+                int grupo1 = plano.grupoMasCercano(x, y);
+                plano.agregarPunto('F', x, y, grupo1);
+                cout << "Punto 'F'. Grupo asignado automaticamente: " << grupo1 << endl;
+                break;
+            }
+            case 5: {
+                clean();
+                int x, y, K;
+                cout << "--- Asignar grupo por KNN ---\n";
+                cout << "Introduce las coordenadas (x, y) para KNN: ";
+                cin >> x >> y;
+                cout << "Introduce el valor de K: ";
+                cin >> K;
+                int grupo2 = plano.knn(x, y, K);
+                if (grupo2 != -1) {
+                    plano.agregarPunto('M', x, y, grupo2);
+                    cout << "Punto 'M'. Grupo asignado por KNN: " << grupo2 << endl;
+                }
+                break;
+            }
+            case 6:
+                cout << "¿Estas seguro que quieres salir? (Y/n): ";
+                char confirmacion;
+                cin >> confirmacion;
+                if (confirmacion == 'Y' || confirmacion == 'y') {
+                    continuar = false;  // Salir del bucle
+                }
+                break;
+            default:
+                cout << "Opcion no valida, intenta nuevamente.\n";
+        }
+
+        // Esperar a que el usuario presione Enter antes de continuar
+        cout << "\nPresiona Enter para continuar...";
+        cin.ignore();  // Limpiar buffer de entrada
+        cin.get();     // Esperar entrada
+        clean();  // Limpiar pantalla
+    }
+
+    return 0;
+}
+
+/*
 int main() {
 
     Clasificador plano;
@@ -298,7 +442,11 @@ int main() {
     plano.agregarPunto('C', 180, 95, 4);    // obesidad
     plano.agregarPunto('D', 175, 85, 3);    // sobrepeso
     cout << "Grupo 1: A, B, C, D\n";
-
+    plano.draw();
+    plano.agregarPunto('1', 145, 55, 6);  // Primer punto
+    plano.agregarPunto('2', 147, 56, 6);  // Otro punto en la misma posicion
+    plano.agregarPunto('3', 149, 58, 6);  // Otro punto en una posicion diferente
+    plano.listarPuntosPorPosicion();
     // Nuevo punto automatico
     int x = 178;
     int y = 64;
@@ -315,9 +463,10 @@ int main() {
     if(grupo2 != -1) {
         plano.agregarPunto('M', x2, y2, grupo2);
         cout << "Punto " << "M" << ". Grupo asignado por KNN: " << grupo2 << endl;
-    }
-
-    plano.draw();
-
-    return 0;
-}
+        }
+        
+        plano.draw();
+        
+        return 0;
+        }
+        */
