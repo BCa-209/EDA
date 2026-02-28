@@ -329,7 +329,30 @@ int main() {
     clean();
     Clasificador plano;
     plano.limites(30, 20);  // Establecer limites del plano 2D
+    // Bajo peso
+    plano.agregarPunto('E',150, 45, 1);
+    plano.agregarPunto('F',155, 48, 1);
+    plano.agregarPunto('G',160, 50, 1);
+    plano.agregarPunto('H',158, 47, 1);
     
+    // Normal
+    plano.agregarPunto('I', 165, 60, 2);
+    plano.agregarPunto('J', 170, 65, 2);
+    plano.agregarPunto('K', 172, 68, 2);
+    plano.agregarPunto('L', 168, 63, 2);
+    
+    // Sobrepeso
+    //plano.agregarPunto('M', 175, 78, 3);
+    plano.agregarPunto('N', 178, 82, 3);
+    plano.agregarPunto('O', 180, 85, 3);
+    plano.agregarPunto('P', 173, 80, 3);
+    
+    // Obesidad
+    plano.agregarPunto('Q', 165, 95, 4);
+    plano.agregarPunto('R', 170, 100, 4);
+    plano.agregarPunto('S', 160, 92, 4);
+    plano.agregarPunto('T', 175, 105, 4);
+
     bool continuar = true;
     while (continuar) {
         cout << "====================================\n";
