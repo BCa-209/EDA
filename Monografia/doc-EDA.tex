@@ -1,0 +1,775 @@
+\documentclass[12pt, letterpaper, oneside]{book}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\geometry{a4paper, margin=1in}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{booktabs} % Para tablas mejoradas
+\usepackage{array} % Para mejor control de tablas
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{float} % Añadido para mejor control de posicionamiento de figuras/tablas
+% \usepackage{tikz-uml} % Para diagramas UML - Package not available (se puede omitir o buscar alternativa)
+
+% ================= FORMATO DE TÍTULOS =================
+\titleformat{\chapter}[display]
+{\normalfont\Huge\bfseries\centering}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{2.3ex plus .2ex}
+
+\titleformat{\subsection}
+{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+% ================= ENCABEZADO Y PIE DE PÁGINA =================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\thepage}
+\setlength{\footskip}{30pt} % Ajuste para evitar superposición
+
+% ================= DATOS PERSONALIZABLES =================
+\newcommand{\universidad}{UNIVERSIDAD NACIONAL DEL ALTIPLANO}
+\newcommand{\facultad}{Facultad de Ingeniería Mecánica Eléctrica, Electrónica y Sistemas}
+\newcommand{\escuela}{E.P. de Ingeniería de Sistemas}
+\newcommand{\titulomonografia}{ANÁLISIS, DISEÑO E IMPLEMENTACIÓN DE ESTRUCTURAS DE DATOS MÉTRICAS PARA LA BÚSQUEDA POR SIMILITUD EN ESPACIOS DISCRETOS Y CONTINUOS}
+\newcommand{\nombreautor}{Brayan Luis Calderon Calderon}
+\newcommand{\materia}{SIS220 - Estructuras de Datos Avanzadas}
+\newcommand{\profesor}{Ing. Miguel Romilio Aceituno Rojo}
+\newcommand{\fechaentrega}{26 de febrero de 2026}
+\newcommand{\codigo}{232036}
+
+% ================= INICIO DEL DOCUMENTO =================
+\begin{document}
+
+% ================= PORTADA =================
+\begin{titlepage}
+    \centering
+
+    % --- LOGO ---
+    % Nota: Sube tu archivo 'logo.png' a la carpeta del proyecto.
+    % Descomenta la siguiente línea para mostrarlo:
+    % \includegraphics[width=0.25\textwidth]{logo.png}
+
+    % Espacio reservado para el logo si no tienes la imagen aún
+    \vspace*{1cm}
+
+    % --- ENCABEZADO ---
+    {\LARGE \bfseries \universidad \par}
+    \vspace{0.5cm}
+    {\Large \facultad \par}
+    \vspace{0.3cm}
+    {\large \escuela \par}
+
+    \vspace{2.5cm} % Espacio antes del título
+
+    % --- TÍTULO ---
+    {\Huge \bfseries \titulomonografia \par}
+
+    \vspace{2cm}
+
+    % --- TIPO DE TRABAJO ---
+    {\Large \textbf{MONOGRAFÍA} \par}
+    \vspace{0.5cm}
+    {\Large \materia \par}
+
+    \vspace{2cm}
+
+    % --- DATOS DEL AUTOR Y DOCENTE ---
+    \begin{minipage}{0.6\textwidth}
+        \begin{flushleft}
+            \large
+            \textbf{Presentado por:} \\
+            \nombreautor \\
+            Código: \codigo
+
+            \vspace{1cm}
+
+            \textbf{Docente:} \\
+            \profesor
+
+            \vspace{1cm}
+
+            \textbf{Fecha de entrega:} \\
+            \fechaentrega
+        \end{flushleft}
+    \end{minipage}
+
+    \vfill % Empuja el año al final de la página
+
+    % --- CIUDAD Y AÑO ---
+    {\large \textbf{PUNO - PERÚ}} \\
+    \vspace{0.2cm}
+    {\large \textbf{\the\year}} % Usa el año actual o escribe 2026 directamente
+
+\end{titlepage}
+
+% ================= PÁGINA DEL ÍNDICE =================
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+
+% ================= INTRODUCCIÓN =================
+\chapter{Introducción}
+
+\section{Contextualización de las Estructuras de Datos Avanzadas}
+
+En la era del Big Data, la naturaleza de la información ha mutado de datos estructurados simples (enteros, cadenas cortas) a objetos complejos de alta dimensionalidad, como vectores de características de imágenes, secuencias genómicas y nubes de puntos 3D. Las estructuras de datos clásicas, como los árboles binarios de búsqueda (BST) o las tablas hash, fallan ante estos datos porque dependen de un orden total o de una función de hash que no preserva la noción de cercanía.
+
+Las Estructuras de Datos Métricas surgen como la solución especializada para organizar objetos donde lo único que conocemos es la distancia entre ellos.
+
+\section{El problema de la búsqueda por similitud (Nearest Neighbor Search)}
+
+El núcleo de esta investigación es el \textit{Nearest Neighbor Search} (NNS). Formalmente, dado un conjunto de objetos $S$ en un espacio métrico y una consulta $q$, el objetivo es encontrar el objeto $u \in S$ tal que la distancia $d(q, u)$ sea mínima.
+
+\begin{itemize}
+    \item \textbf{Búsqueda por Rango:} Encontrar todos los objetos a una distancia $r$ de $q$.
+    \item \textbf{$K$-NN:} Encontrar los $k$ objetos más cercanos.
+\end{itemize}
+
+El reto no es solo encontrar el resultado, sino hacerlo evitando la búsqueda exhaustiva ($O(n)$), la cual es computacionalmente prohibitiva en conjuntos de datos de escala masiva.
+
+\section{La ``maldición de la dimensionalidad'' en espacios métricos}
+
+A medida que aumenta la dimensionalidad de los datos, el volumen del espacio crece exponencialmente y los datos se vuelven dispersos. En dimensiones altas, la diferencia entre la distancia al vecino más cercano y al más lejano tiende a cero, lo que invalida muchas estrategias de particionamiento espacial.
+
+Esta monografía analiza cómo estructuras como el VPT y el M-Tree intentan mitigar este efecto mediante el uso eficiente de la desigualdad triangular para podar o descartar regiones del espacio que no contienen resultados relevantes, reduciendo drásticamente el número de cálculos de distancia.
+
+\section{Objetivos de la monografía}
+
+El presente trabajo se propone:
+\begin{itemize}
+    \item Analizar los fundamentos matemáticos que permiten la búsqueda en espacios métricos.
+    \item Explorar el funcionamiento del Burkhard-Keller Tree (BKT) como referente para distancias discretas.
+    \item Evaluar las estructuras de puntos de ventaja (VPT, MVPT, VPF) y árboles métricos jerárquicos (MST, MT) para entornos de datos continuos.
+    \item Establecer criterios técnicos para la selección de la estructura óptima según el tipo de dato y la métrica de distancia empleada.
+\end{itemize}
+
+\chapter{Fundamentos de Espacios Métricos}
+
+El éxito de las estructuras como BKT o VPT no reside en el orden de los elementos (como en un AVL), sino en las propiedades geométricas del espacio donde habitan los datos.
+
+\section{Definición formal de espacio métrico}
+
+Un Espacio Métrico es un par ordenado $(\mathbb{X}, d)$, donde $\mathbb{X}$ es un conjunto no vacío (el universo de nuestros datos) y $d$ es una función de distancia (métrica) $d: \mathbb{X} \times \mathbb{X} \to \mathbb{R}$ que asigna un valor real a cualquier par de objetos.
+
+Para que $d$ sea considerada una métrica válida, debe satisfacer cuatro axiomas fundamentales para todo $x, y, z \in \mathbb{X}$:
+
+\begin{itemize}
+    \item \textbf{No negatividad:} $d(x, y) \ge 0$.
+    \item \textbf{Identidad de los indiscernibles:} $d(x, y) = 0 \iff x = y$.
+    \item \textbf{Simetría:} $d(x, y) = d(y, x)$.
+    \item \textbf{Desigualdad Triangular:} $d(x, z) \le d(x, y) + d(y, z)$.
+\end{itemize}
+
+\section{La desigualdad triangular: el motor de la poda}
+
+Este es el concepto más crítico de la monografía. En estructuras de datos, usamos esta propiedad para descartar regiones enteras del espacio sin calcular distancias reales.
+
+\subsection*{Principio de poda}
+
+Si conocemos la distancia entre una consulta $q$ y un punto de referencia (pivote) $p$, y conocemos la distancia entre $p$ y un objeto almacenado $u$, podemos establecer límites inferiores y superiores para la distancia $d(q, u)$ sin calcularla directamente:
+\[
+|d(q, p) - d(p, u)| \le d(q, u) \le d(q, p) + d(p, u)
+\]
+
+Si el rango de búsqueda de nuestra consulta no se solapa con estos límites, el objeto $u$ (y, potencialmente, todo el subárbol que cuelga de él) puede ser ignorado.
+
+\section{Clasificación de espacios de búsqueda}
+
+Dependiendo de la naturaleza de $\mathbb{X}$ y $d$, las estructuras de datos se dividen en dos grandes grupos:
+
+\subsection*{Espacios discretos}
+
+Aquí, el rango de la función de distancia es un conjunto de valores enteros o finitos (ej. $\{0, 1, 2, \dots\}$).
+
+\textbf{Ejemplo clásico:} La Distancia de Levenshtein (o de edición), que cuenta el número mínimo de operaciones para transformar una palabra en otra.
+
+\textbf{Estructura ideal:} BKT (Burkhard-Keller Tree), que utiliza estas distancias discretas para crear ramas específicas para cada valor entero.
+
+\subsection*{Espacios continuos}
+
+El rango de la distancia es $\mathbb{R}^+$ y los datos suelen ser vectores en $\mathbb{R}^n$.
+
+\textbf{Ejemplo clásico:} Distancia Euclidiana ($L_2$) o Manhattan ($L_1$).
+
+\textbf{Estructura ideal:} VPT (Vantage Point Tree), que debe usar umbrales (radios) para dividir el espacio en dentro de la bola o fuera de la bola, ya que no existen valores discretos para cada rama.
+
+\section{Tipos de distancias (métricas) comunes}
+
+Para la monografía, es vital mencionar que la estructura elegida depende de la métrica:
+\begin{itemize}
+    \item \textbf{Minkowski ($L_p$):} Generalización que incluye a la Euclidiana ($p=2$) y Manhattan ($p=1$).
+    \item \textbf{Distancia de Coseno:} Usada en procesamiento de lenguaje natural (NLP) para medir la similitud angular entre vectores de palabras. Técnicamente no es una métrica porque no cumple la desigualdad triangular, pero se puede transformar (por ejemplo, usando la distancia angular) para usarse en estas estructuras.
+    \item \textbf{Distancia de Jaccard:} Usada para comparar la similitud entre conjuntos de datos.
+\end{itemize}
+
+\chapter{Estructuras para Espacios Discretos: Burkhard-Keller Tree (BKT)}
+
+En este capítulo, entramos de lleno en la primera estructura de datos avanzada del estudio. El \textit{Burkhard-Keller Tree} (BKT) es una joya de la ingeniería de algoritmos diseñada específicamente para espacios donde las distancias son valores discretos (números enteros).
+
+El BKT fue propuesto en 1973 por Walter A. Burkhard y Robert M. Keller. Su diseño aprovecha que, en ciertos dominios, la distancia entre dos objetos siempre resulta en un entero, lo que permite una ramificación exacta y una poda muy eficiente.
+
+\section{Origen y motivación}
+
+En estructuras de búsqueda tradicionales para texto, como los \textit{Tries} o \textit{Suffix Trees}, la búsqueda es exacta. Sin embargo, en problemas como la corrección ortográfica o la identificación de huellas genéticas, necesitamos encontrar elementos cercanos.
+
+El BKT resuelve esto organizando los elementos no por su contenido, sino por su distancia relativa a un nodo raíz.
+
+\section{Algoritmo de construcción}
+
+La construcción del árbol es incremental y sigue estas reglas:
+\begin{itemize}
+    \item \textbf{Selección de la raíz:} El primer elemento insertado se convierte en la raíz del árbol.
+    \item \textbf{Inserción de nodos:} Para insertar un nuevo elemento $u$:
+    \begin{itemize}
+        \item Se calcula la distancia $d = \mathrm{dist}(\mathrm{raíz}, u)$.
+        \item Si la raíz ya tiene un hijo con la arista de valor $d$, se repite el proceso recursivamente con ese hijo.
+        \item Si no existe un hijo con esa distancia, $u$ se convierte en el nuevo hijo de la raíz, conectado por una arista etiquetada con el valor $d$.
+    \end{itemize}
+\end{itemize}
+
+\section{Algoritmo de búsqueda por rango (querying)}
+
+Supongamos que queremos encontrar todos los elementos $u$ en el árbol tales que $\mathrm{dist}(q, u) \le r$, donde $q$ es nuestra consulta y $r$ es el radio de tolerancia (por ejemplo, buscar palabras con máximo 2 errores de escritura).
+
+\begin{enumerate}
+    \item Se calcula $D = \mathrm{dist}(q, \mathrm{raíz})$.
+    \item Se añade la raíz a los resultados si $D \le r$.
+    \item \textbf{Criterio de poda (pruning):} Solo exploramos los hijos cuya arista $d_h$ cumpla:
+\end{enumerate}
+\[
+D - r \le d_h \le D + r
+\]
+
+Este rango se deriva directamente de la desigualdad triangular. Cualquier subárbol fuera de este rango no puede contener físicamente ningún elemento que esté a distancia $r$ de $q$.
+
+\section{Análisis de eficiencia}
+
+\begin{itemize}
+    \item \textbf{Complejidad de espacio:} $O(n)$, donde $n$ es el número de elementos.
+    \item \textbf{Complejidad de búsqueda:} En el peor de los casos es $O(n)$, pero en la práctica, para radios de búsqueda pequeños, se comporta de manera logarítmica.
+    \item \textbf{Limitación principal:} Solo es eficiente si el diámetro del espacio métrico (la distancia máxima posible) es pequeño. Si las distancias son muy variadas o continuas, el árbol tendría demasiados hijos por nodo, degradando el rendimiento.
+\end{itemize}
+
+\section{Casos de uso reales}
+
+\begin{itemize}
+    \item Correctores ortográficos: usando la distancia de Levenshtein.
+    \item Sistemas de recomendación de amigos o contactos: basados en intereses comunes discretos.
+    \item Bioinformática: comparación de cadenas de nucleótidos (ADN).
+\end{itemize}
+
+\chapter{Estructuras para Espacios Continuos: La Familia Vantage Point}
+
+En espacios métricos continuos (como el espacio euclidiano $\mathbb{R}^n$), no podemos crear una rama para cada valor de distancia. La familia de árboles de Puntos de Ventaja (\textit{Vantage Point}) soluciona esto mediante un particionamiento binario del espacio basado en umbrales esféricos.
+
+\section{Vantage Point Tree (VPT)}
+
+Propuesto por Peter Yianilos en 1993, el VPT es la base de la búsqueda por similitud en dimensiones altas.
+
+\begin{itemize}
+    \item \textbf{Selección del punto de ventaja ($p$):} Se elige un elemento del conjunto para que actúe como pivote o punto de ventaja. Idealmente, este punto debe estar en un extremo del conjunto de datos para maximizar la diferenciación.
+    \item \textbf{Radio de la mediana ($\mu$):} Se calculan las distancias de todos los demás puntos hacia $p$. Se determina la mediana de estas distancias ($\mu$).
+    \item \textbf{Partición binaria:}
+    \begin{itemize}
+        \item \textbf{Hijo izquierdo (interior):} Contiene todos los puntos $u$ tales que $d(p, u) \le \mu$ (dentro de la bola).
+        \item \textbf{Hijo derecho (exterior):} Contiene todos los puntos $u$ tales que $d(p, u) > \mu$ (fuera de la bola).
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Búsqueda y poda}
+
+Al buscar una consulta $q$ con radio $r$, decidimos si entrar a una rama basándonos en si la zona de búsqueda solapa los límites de la mediana:
+\[
+\text{Si } d(q, p) - r \le \mu, \text{ exploramos el hijo izquierdo.}
+\]
+\[
+\text{Si } d(q, p) + r > \mu, \text{ exploramos el hijo derecho.}
+\]
+
+\section{Multi-Vantage Point Tree (MVPT)}
+
+El MVPT es una evolución diseñada para optimizar el recurso más crítico: el número de cálculos de distancia.
+
+\begin{itemize}
+    \item \textbf{Múltiples pivotes:} En lugar de un solo punto de ventaja por nivel, el MVPT utiliza dos o más puntos de ventaja en un solo nodo.
+    \item \textbf{Uso de memoria (filtrado de distancias):} Almacena distancias calculadas previamente en los niveles superiores para evitar recalcularlas en niveles inferiores. Esto permite que un solo cálculo de distancia descarte subárboles en múltiples niveles de profundidad, mejorando drásticamente el rendimiento en conjuntos de datos masivos.
+\end{itemize}
+
+\section{Vantage Point Forest (VPF)}
+
+Cuando los datos son extremadamente complejos o de muy alta dimensionalidad, un solo árbol puede volverse ineficiente debido al solapamiento de regiones.
+
+\begin{itemize}
+    \item \textbf{Estructura de bosque:} El VPF utiliza múltiples árboles independientes (un bosque) construidos con diferentes puntos de ventaja iniciales.
+    \item \textbf{Búsqueda paralela/probabilística:} Permite realizar búsquedas en paralelo y, en aplicaciones de tiempo real (como visión artificial), puede detenerse tras encontrar una buena aproximación, sacrificando exactitud por velocidad extrema.
+\end{itemize}
+
+\chapter{Otras Estructuras Métricas Relevantes: MST y M-Tree}
+
+En esta sección exploramos cómo las estructuras métricas evolucionan para manejar grandes volúmenes de datos que cambian con el tiempo (inserciones y borrados) y que no caben en la memoria RAM.
+
+\section{Metric Space Tree (MST)}
+
+El término MST, en el contexto de métricas avanzadas, se refiere a jerarquías de particionamiento del espacio basadas en distancias. A menudo se utiliza como un modelo conceptual para entender cómo se agrupan los puntos en clústeres métricos.
+
+\begin{itemize}
+    \item \textbf{Organización:} Los puntos se agrupan en torno a centros de clúster. Cada nodo define una región del espacio mediante un centro y un radio de cobertura.
+    \item \textbf{Limitación:} Muchos MST tradicionales son estáticos; si los datos cambian, la estructura pierde balanceo y eficiencia rápidamente.
+\end{itemize}
+
+\subsection{Bisector Tree (BST)}
+El Bisector Tree es una de las estructuras pioneras para el particionamiento de espacios métricos. A diferencia del VPT, que utiliza un solo punto de ventaja y un radio, el BST utiliza dos puntos de ventaja (pivotes) $p_1$ y $p_2$.
+
+\begin{itemize}
+    \item \textbf{Particionamiento:} El espacio se divide mediante un hiperplano implícito definido por todos los puntos que están más cerca de $p_1$ que de $p_2$.
+    \item \textbf{Criterio de cobertura:} Cada nodo almacena los radios $r_1$ y $r_2$, que representan la distancia máxima desde el pivote respectivo a cualquier punto en su subárbol.
+    \item \textbf{Poda:} Durante la búsqueda, si la bola de consulta no intersecta la región del bisector, se descarta el subárbol completo.
+\end{itemize}
+
+\section{Metric Tree (MT / M-Tree)}
+
+El M-Tree (propuesto por Ciaccia, Patella y Zezula en 1997) es probablemente la estructura más robusta para funciones continuas, ya que fue diseñada para comportarse como un B-Tree pero en espacios métricos.
+
+\subsection*{Características dinámicas}
+
+\begin{itemize}
+    \item A diferencia del VPT, el M-Tree se construye de abajo hacia arriba (\textit{bottom-up}).
+    \item \textbf{Inserciones:} Cuando un nuevo dato entra, se busca el nodo hoja cuya región métrica requiera la menor expansión para incluirlo.
+    \item \textbf{Balanceo (split):} Si un nodo excede su capacidad, se divide en dos, eligiendo dos nuevos centros y redistribuyendo los objetos. Esto mantiene el árbol balanceado automáticamente.
+\end{itemize}
+
+\subsection*{Componentes del nodo}
+
+Cada nodo en un M-Tree almacena Objetos de Enrutamiento (\textit{Routing Objects}). Para cada objeto $O_r$, se guarda:
+
+\begin{itemize}
+    \item El radio de cobertura ($r(O_r)$): la distancia máxima desde $O_r$ hasta cualquier objeto en su subárbol.
+    \item La distancia al padre: para acelerar las consultas usando la desigualdad triangular sin cálculos adicionales.
+\end{itemize}
+
+\subsection*{Optimización para memoria secundaria (disco)}
+
+Esta es la mayor ventaja del M-Tree. Al tener un alto factor de ramificación (muchos hijos por nodo), el árbol es chato o de poca altura. Esto minimiza las operaciones de lectura/escritura en disco, lo que lo hace ideal para sistemas de gestión de bases de datos (DBMS).
+
+\section{Comparación crítica: VPT vs. M-Tree}
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Característica} & \textbf{Vantage Point Tree (VPT)} & \textbf{M-Tree (MT)} \\
+\hline
+Construcción & Top-Down (Estático) & Bottom-Up (Dinámico) \\
+\hline
+Balanceo & Difícil tras inserciones & Automático (vía \textit{split}) \\
+\hline
+Uso de memoria & Optimizado para RAM & Optimizado para Disco (I/O) \\
+\hline
+Criterio de división & Mediana de distancias & Algoritmos de clustering \\
+\hline
+\end{tabular}
+\end{center}
+
+\chapter{Análisis Comparativo y Complejidad}
+
+Llegamos al Capítulo VI, la sección de análisis crítico. Aquí se evalúa no solo cómo funcionan las estructuras, sino cuándo y por qué elegir una sobre otra basándose en su rendimiento computacional.
+
+En este capítulo, comparamos el rendimiento de las estructuras analizadas bajo tres métricas fundamentales: el tiempo de construcción, el costo de búsqueda y la eficiencia en el uso de la memoria.
+
+\section{Análisis de complejidad temporal}
+
+La complejidad en espacios métricos se mide principalmente en el número de evaluaciones de la función de distancia ($d$), ya que esta suele ser mucho más costosa que cualquier operación aritmética simple.
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{2.5cm}|c|c|c|}
+\hline
+\textbf{Estructura} & \textbf{Construcción} & \textbf{Búsqueda} & \textbf{Búsqueda} \\
+ & \textbf{(Promedio)} & \textbf{(Caso Promedio)} & \textbf{(Peor Caso)} \\
+\hline
+Burkhard-Keller Tree (BKT) & $O(n \log n)$ & $O(\log n)$ & $O(n)$ \\
+\hline
+Vantage Point Tree (VPT) & $O(n \log n)$ & $O(\log n)$ & $O(n)$ \\
+\hline
+Multi-Vantage Point Tree (MVPT) & $O(n \log n)$ & $O(\log n)^{*}$ & $O(n)$ \\
+\hline
+M-Tree & $O(n \log n)$ & $O(\log n)$ & $O(n)$ \\
+\hline
+\multicolumn{4}{p{11cm}}{$^{*}$El MVPT reduce la constante oculta en la notación Big O mediante la reutilización de cálculos de distancia previos.} \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent
+\textit{Nota:} El MVPT reduce la constante oculta en la notación Big $O$ al reutilizar cálculos de distancia previos.
+
+\section{Comparación de eficiencia por tipo de espacio}
+
+No todas las estructuras se comportan igual ante diferentes naturalezas de datos:
+
+\subsection*{Espacios discretos (BKT)}
+
+Su eficiencia depende del alfabeto de distancias. Si el rango de distancias es pequeño (por ejemplo, distancias de edición entre 0 y 10), el árbol es muy ancho y poco profundo, lo que acelera la búsqueda.
+
+\subsection*{Espacios continuos (VPT / M-Tree)}
+
+\begin{itemize}
+    \item El VPT es superior en memoria RAM gracias a su estructura binaria compacta.
+    \item El M-Tree es el ganador absoluto cuando los datos no caben en memoria y deben ser paginados en disco (bases de datos vectoriales).
+\end{itemize}
+
+\section{El impacto de la dimensionalidad}
+
+Un punto vital es mencionar cómo la eficiencia de búsqueda se degrada cuando la dimensión ($D$) aumenta.
+
+\begin{itemize}
+    \item En dimensiones bajas ($D < 10$), estas estructuras son extremadamente rápidas.
+    \item En dimensiones muy altas ($D > 100$), ocurre el fenómeno de la superposición de regiones, donde casi todas las ramas del árbol deben ser exploradas, y el rendimiento tiende a la búsqueda lineal ($O(n)$).
+\end{itemize}
+
+\section{Resumen de trade-offs (compromisos)}
+
+\begin{center}
+\footnotesize % Fuente más pequeña para garantizar que quepa
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3cm}|p{4cm}|p{6cm}|}
+\hline
+\textbf{Escenario de Aplicación} & \textbf{Estructura Óptima} & \textbf{Justificación Técnica} \\
+\hline
+Datos estáticos en RAM 
+& Vantage Point Tree (VPT) 
+& Estructura binaria compacta que maximiza la poda mediante particionamiento por medianas. Ideal para consultas en conjuntos inmutables. \\
+\hline
+Mínima evaluación de distancia 
+& Multi-Vantage Point Tree (MVPT) 
+& Reutiliza distancias calculadas en niveles superiores, reduciendo drásticamente el número de llamadas a la función métrica. \\
+\hline
+Datos dinámicos en disco 
+& M-Tree 
+& Balanceo automático y organización por páginas que minimiza las operaciones de E/S en almacenamiento secundario. \\
+\hline
+Datos discretos (texto, ADN) 
+& Burkhard-Keller Tree (BKT) 
+& Aprovecha distancias enteras para crear ramificación exacta, permitiendo poda óptima en espacios discretos. \\
+\hline
+\end{tabular}
+\end{center}
+
+\chapter{Implementación Práctica y Algoritmos}
+
+En este capítulo se presentan implementaciones académicas simplificadas de las principales estructuras métricas estudiadas. El objetivo es ilustrar su funcionamiento algorítmico, manteniendo coherencia con los fundamentos matemáticos desarrollados en capítulos anteriores.
+
+% =====================================================
+\section{Burkhard-Keller Tree (BKT)}
+
+El BKT es especialmente adecuado para espacios métricos discretos, donde la función de distancia devuelve valores enteros.
+
+\subsection*{Pseudocódigo de búsqueda}
+
+\begin{verbatim}
+Función Buscar(nodo, consulta, radio, resultados):
+    Si nodo es Nulo: Retornar
+
+    d = calcular_distancia(nodo.valor, consulta)
+
+    Si d <= radio:
+        Agregar nodo.valor a resultados
+
+    Para cada hijo en nodo.hijos:
+        Si (d - radio) <= hijo.distancia_al_padre <= (d + radio):
+            Buscar(hijo, consulta, radio, resultados)
+\end{verbatim}
+\noindent
+\subsection*{Implementación en C++}
+
+\begin{verbatim}
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+// Distancia de Levenshtein simplificada
+int levenshteinDistance(const string& s1, const string& s2) {
+    int m = s1.length(), n = s2.length();
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0) dp[i][j] = j;
+            else if (j == 0) dp[i][j] = i;
+            else if (s1[i - 1] == s2[j - 1])
+                dp[i][j] = dp[i - 1][j - 1];
+            else
+                dp[i][j] = 1 + min({dp[i - 1][j],
+                                    dp[i][j - 1],
+                                    dp[i - 1][j - 1]});
+        }
+    }
+    return dp[m][n];
+}
+
+struct Node {
+    string word;
+    map<int, Node*> children;
+
+    Node(const string& w) : word(w) {}
+};
+
+void insert(Node* root, const string& word) {
+    if (!root) return;
+
+    int d = levenshteinDistance(root->word, word);
+
+    if (root->children.find(d) == root->children.end()) {
+        root->children[d] = new Node(word);
+    } else {
+        insert(root->children[d], word);
+    }
+}
+
+void query(Node* root, const string& word,
+            int r, vector<string>& res) {
+
+    if (!root) return;
+
+    int d = levenshteinDistance(root->word, word);
+
+    if (d <= r)
+        res.push_back(root->word);
+
+    for (int dist = d - r; dist <= d + r; dist++) {
+        if (root->children.count(dist)) {
+            query(root->children[dist], word, r, res);
+        }
+    }
+}
+\end{verbatim}
+\noindent
+\textbf{Nota técnica:} En implementaciones reales se recomienda el uso de \texttt{smart pointers} o destructores adecuados para evitar fugas de memoria.
+
+% =====================================================
+\section{Vantage Point Tree (VPT)}
+
+El VPT es adecuado para espacios métricos continuos, especialmente en memoria RAM.
+
+\subsection*{Pseudocódigo de construcción}
+
+\begin{verbatim}
+Función ConstruirVPT(S):
+    Si S está vacío: Retornar Nulo
+
+    p = elegir_punto_ventaja(S)
+    calcular distancias desde p
+    mu = mediana(distancias)
+
+    S_izq = {u | dist(p,u) <= mu}
+    S_der = {u | dist(p,u) > mu}
+
+    Retornar Nodo(p, mu,
+                  ConstruirVPT(S_izq),
+                  ConstruirVPT(S_der))
+\end{verbatim}
+\noindent
+\subsection*{Implementación en C++}
+
+\begin{verbatim}
+#include <cmath>
+#include <vector>
+
+using namespace std;
+
+struct Point {
+    double x, y;
+};
+
+double euclidean(const Point& a, const Point& b) {
+    return sqrt(pow(a.x - b.x, 2) +
+                pow(a.y - b.y, 2));
+}
+
+struct VPNode {
+    Point vp;
+    double mu;
+    VPNode *left, *right;
+
+    VPNode(Point p)
+        : vp(p), mu(0),
+          left(nullptr), right(nullptr) {}
+};
+
+void search(VPNode* node,
+            const Point& q,
+            double r,
+            vector<Point>& res) {
+
+    if (!node) return;
+
+    double d = euclidean(node->vp, q);
+
+    if (d <= r)
+        res.push_back(node->vp);
+
+    if (d - r <= node->mu)
+        search(node->left, q, r, res);
+
+    if (d + r > node->mu)
+        search(node->right, q, r, res);
+}
+\end{verbatim}
+\noindent
+\textbf{Nota técnica:} La construcción completa requiere cálculo eficiente de la mediana y particionamiento del conjunto; se omite aquí por claridad académica.
+
+% =====================================================
+\section{Bisector Tree (BST)}
+
+El Bisector Tree divide el espacio utilizando dos pivotes y asigna cada punto al pivote más cercano.
+
+\subsection*{Pseudocódigo de construcción}
+
+\begin{verbatim}
+Función ConstruirBST(S):
+    Si |S| < 2:
+        Retornar NodoHoja(S)
+
+    Seleccionar pivotes p1, p2
+
+    S1 = {u | dist(p1,u) <= dist(p2,u)}
+    S2 = {u | dist(p2,u) < dist(p1,u)}
+
+    r1 = max dist(p1, elementos en S1)
+    r2 = max dist(p2, elementos en S2)
+
+    Retornar Nodo(p1, p2, r1, r2,
+                  ConstruirBST(S1),
+                  ConstruirBST(S2))
+\end{verbatim}
+\noindent
+\subsection*{Implementación en C++}
+
+\begin{verbatim}
+struct BSTNode {
+    Point p1, p2;
+    double r1, r2;
+    BSTNode *left, *right;
+
+    BSTNode(Point a, Point b,
+            double rad1, double rad2)
+        : p1(a), p2(b),
+          r1(rad1), r2(rad2),
+          left(nullptr), right(nullptr) {}
+};
+
+void searchBST(BSTNode* node,
+               const Point& q,
+               double r,
+               vector<Point>& res) {
+
+    if (!node) return;
+
+    double d1 = euclidean(q, node->p1);
+    double d2 = euclidean(q, node->p2);
+
+    if (d1 <= r) res.push_back(node->p1);
+    if (d2 <= r) res.push_back(node->p2);
+
+    if (d1 - r <= node->r1)
+        searchBST(node->left, q, r, res);
+
+    if (d2 - r <= node->r2)
+        searchBST(node->right, q, r, res);
+}
+\end{verbatim}
+\noindent
+% =====================================================
+\section*{Consideraciones de implementación}
+
+Las implementaciones presentadas son versiones académicas simplificadas.
+En entornos reales deben considerarse:
+
+\begin{itemize}
+\item Gestión segura de memoria (smart pointers).
+\item Optimización del cálculo de distancias.
+\item Estrategias de selección óptima de pivotes.
+\item Paralelización de consultas.
+\item Estructuras cache-friendly para alto rendimiento.
+\end{itemize}
+
+Estas mejoras son esenciales cuando las estructuras métricas se aplican en sistemas modernos de recuperación de información y bases de datos vectoriales.
+
+\chapter{Conclusiones}
+
+Llegamos al capítulo final de la monografía. En esta sección se sintetizan los hallazgos técnicos y se proyecta la importancia de estas estructuras en el panorama tecnológico actual (2026), especialmente con el auge de la Inteligencia Artificial.
+
+\section{Síntesis de la investigación}
+
+A lo largo de este trabajo, se ha demostrado que la búsqueda por similitud en espacios métricos trasciende las capacidades de las estructuras de datos tradicionales. Mientras que el BKT se consolida como la solución óptima para dominios discretos (como la lingüística computacional), la familia de árboles \textit{Vantage Point} y el M-Tree ofrecen un marco robusto para manejar la complejidad de los datos continuos y de alta dimensionalidad.
+
+\section{Eficiencia y el factor de distancia}
+
+Una conclusión fundamental es que la eficiencia en estas estructuras no se mide por la cantidad de nodos visitados, sino por la minimización de las llamadas a la función de distancia.
+
+La desigualdad triangular no es solo una propiedad matemática, sino la herramienta de ingeniería que permite que sistemas masivos (como la búsqueda de imágenes por contenido) sean viables en tiempo real.
+
+\section{Adaptabilidad según el entorno}
+
+Se concluye que la elección de la estructura debe estar estrictamente alineada con el entorno de ejecución:
+
+\begin{itemize}
+    \item Para aplicaciones en memoria con datos estáticos, el VPT ofrece el mejor compromiso entre simplicidad y velocidad.
+    \item Para sistemas de bases de datos escalables que requieren inserciones constantes, el M-Tree es la arquitectura de referencia debido a su naturaleza dinámica y optimización para almacenamiento persistente.
+\end{itemize}
+
+\section{El futuro: bases de datos vectoriales e IA}
+
+En la actualidad, estas estructuras de datos avanzadas forman el núcleo de las Bases de Datos Vectoriales (\textit{Vector Databases}). Con el crecimiento de los Modelos de Lenguaje (LLMs) y los \textit{embeddings}, la capacidad de realizar búsquedas rápidas en espacios métricos de cientos de dimensiones es más crítica que nunca.
+
+Las técnicas de particionamiento analizadas en esta monografía constituyen la base sobre la cual se construyen los sistemas de recuperación de información de próxima generación.
+
+% ================= BIBLIOGRAFÍA =================
+\addcontentsline{toc}{chapter}{BIBLIOGRAFÍA}
+
+\begin{thebibliography}{99}
+
+\bibitem{burkhard1973}
+Burkhard, W. A., \& Keller, R. M. (1973).
+\textit{Some approaches to best-match file searching}.
+Communications of the ACM.
+
+\bibitem{yianilos1993}
+Yianilos, P. N. (1993).
+\textit{Data structures and algorithms for nearest neighbor search in general metric spaces}.
+Proceedings of the ACM-SIAM Symposium on Discrete Algorithms (SODA).
+
+\bibitem{ciaccia1997}
+Ciaccia, P., Patella, M., \& Zezula, P. (1997).
+\textit{M-tree: An efficient access method for similarity search in metric spaces}.
+Proceedings of the International Conference on Very Large Data Bases (VLDB).
+
+\bibitem{chavez2001}
+Chávez, E., Navarro, G., Baeza-Yates, R., \& Marroquín, J. L. (2001).
+\textit{Searching in metric spaces}.
+ACM Computing Surveys.
+
+\bibitem{kalantari1983}
+Kalantari, I., \& McDonald, G. (1983).
+\textit{A data structure and an algorithm for the nearest neighbor problem}.
+IEEE Transactions on Software Engineering.
+
+\end{thebibliography}
+
+\end{document}
